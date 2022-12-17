@@ -1,0 +1,11 @@
+name: "Debug manifests generate output"
+description: "Debug manifests generate output"
+inputs:
+  path:
+    description: "Your manifests YAML file path"
+runs:
+  using: docker
+  # image: Dockerfile
+  image: docker://ghcr.io/socialgouv/workflows/actions/debug-manifests/output:v1
+  args:  
+    - '${{ inputs.path }}'

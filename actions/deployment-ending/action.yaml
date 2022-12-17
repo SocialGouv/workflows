@@ -1,0 +1,47 @@
+name: "Ending Deployment"
+description: "Notify Github Ending Deployment"
+inputs:
+  token:
+    description: "The Github authentication token"
+    required: true
+  deployment-id:
+    description: "Deployment id"
+    required: true
+  deployment-name:
+    description: "The deployment name"
+    required: true
+  deployment-url:
+    description: "The deployment url"
+    required: false
+outputs:
+  url:
+    description: "Main deployment URL"
+    value: ${{ steps.environment-url.outputs.url }}
+runs:
+  using: "composite"
+  steps:
+    - uses: socialgouv/workflows/actions/debug-manifests@v1
+      with:
+        token: ${{ inputs.token }}
+        path: "manifests.yaml"
+        name: "manifests-${{ inputs.deployment-name }}.yaml"
+        
+    - name: Notify deployment end
+      uses: bobheadxi/deployments@v1
+      if: env.DEPLOYMENT_OK == 'true'
+      with:
+        step: finish
+        status: ${{ job.status }}
+        token: ${{ inputs.token }}
+        env_url: ${{ inputs.deployment-url }}
+        env: ${{ inputs.deployment-name }}
+        deployment_id: ${{ inputs.deployment-id }}
+    
+    - name: Notify Final Status
+      shell: bash
+      run: |
+        if [ "$DEPLOYMENT_OK" != "true" ]; then
+          echo "Pipeline failed ❌"
+          echo 'see previous steps to inspect full logs'
+          exit 1
+        fi

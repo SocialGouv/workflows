@@ -1,0 +1,39 @@
+name: "⛑ Debug manifests ⛑"
+description: "Debug some kubernetes manifests"
+inputs:
+  token:
+    description: "Github token for PR comment"
+  path:
+    description: "Manifests file path, default manifests.yaml"
+    default: "manifests.yaml"
+  name:
+    description: "Manifests artifact name"
+    default: "manifests.yaml"
+runs:
+  using: "composite"
+  steps:
+    - name: Archive manifest
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+
+    - name: Debug manifests
+      id: debug-manifests
+      uses: socialgouv/workflows/actions/debug-manifests/output@v1
+      with:
+        path: ${{ inputs.path }}
+
+    - uses: jwalton/gh-find-current-pr@v1
+      id: finder
+
+    - name: ⛑ Comment PR
+      if: env.DEPLOYMENT_OK == 'true'
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        number: ${{ steps.finder.outputs.pr }}
+        recreate: true
+        message: |
+          🎉 Deployment for commit ${{ github.sha }} :
+          ${{ fromJSON(env.DEBUG_MANIFESTS_MARKDOWN_JSON).result }}
+        GITHUB_TOKEN: ${{ inputs.token }}

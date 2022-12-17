@@ -1,0 +1,66 @@
+name: "Starting Deployment 🎬"
+description: "Notify Github Starting Deployment"
+inputs:
+  environment-scope:
+    description: "The deployment environment name or environment name prefix"
+    default: "dev"
+    required: false
+  multiple:
+    description: "Add branch slug suffix to environment name"
+    required: false
+  token:
+    description: "The Github authentication token"
+    required: true
+outputs:
+  deployment-id:
+    description: "Deployment id"
+    value: ${{ steps.deployment.outputs.deployment_id }}
+  deployment-name:
+    description: "Deployment name"
+    value: ${{ steps.deployment-vars.outputs.deployment-name }}
+runs:
+  using: "composite"
+  steps:
+    - name: Load Deployment Vars
+      id: deployment-vars
+      shell: bash
+      env:
+        ENVIRONMENT_SCOPE: "${{ inputs.environment-scope }}"
+        MULTIPLE: "${{ inputs.multiple }}"
+      run: |
+        set -e
+        if [ -n "$GITHUB_HEAD_REF" ]; then
+          BRANCH=$GITHUB_HEAD_REF
+        else
+          BRANCH=$GITHUB_REF
+        fi
+        BRANCH=${BRANCH#refs/heads/}
+        BRANCH=${BRANCH#refs/tags/}
+        
+        if [ "$MULTIPLE" = "" ]; then
+          if [ "$ENVIRONMENT_SCOPE" = "production" ] || [ "$ENVIRONMENT_SCOPE" = "preproduction" ]; then
+            MULTIPLE="false"
+          else
+            MULTIPLE="true"
+          fi
+        fi
+
+        if [ "$MULTIPLE" = "false" ]; then
+          deployment_name="${ENVIRONMENT_SCOPE}"
+        else
+          BRANCH_SLUG=$(npx @socialgouv/env-slug "$BRANCH")
+          deployment_name="${ENVIRONMENT_SCOPE}-${BRANCH_SLUG}"
+        fi
+        
+        echo "deployment-name=$deployment_name">>$GITHUB_OUTPUT
+
+    - name: Notify deployment start
+      uses: bobheadxi/deployments@v1
+      id: deployment
+      if: github.event_name != 'delete'
+      with:
+        step: start
+        token: ${{ inputs.token }}
+        override: true
+        desc: "Deploying environment: ${{ steps.deployment-vars.outputs.deployment-name }}"
+        env: ${{ steps.deployment-vars.outputs.deployment-name }}

@@ -1,0 +1,38 @@
+on:
+  workflow_call:
+    inputs:
+      chart:
+        required: false
+        type: string
+      ignoreProjectTemplates:
+        required: false
+        type: boolean
+      environment:
+        required: false
+        type: string
+      inlineValues:
+        required: false
+        type: string
+      inlineSet:
+        required: false
+        type: string
+    secrets:
+      KUBECONFIG:
+        required: true
+
+jobs:
+  deploy:
+    name: Custom Pipeline 🛸
+    runs-on: ubuntu-latest
+    environment: custom
+    steps:
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@v1
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          chart: ${{ inputs.chart }}
+          ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
+          environment: ${{ inputs.environment }}
+          inlineValues: ${{ inputs.inlineValues }}
+          inlineSet: ${{ inputs.inlineSet }}

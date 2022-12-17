@@ -1,0 +1,53 @@
+on:
+  workflow_call:
+    inputs:
+      ignoreProjectTemplates:
+        required: false
+        type: boolean
+        default: true
+      inlineValues:
+        required: false
+        type: string
+      inlineSet:
+        required: false
+        type: string
+    secrets:
+      KUBECONFIG:
+        required: true
+
+jobs:
+  deploy:
+    name: Deactivate Pipeline ♻️
+    runs-on: ubuntu-latest
+    environment: deactivate
+    steps:
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@v1
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          chart: deactivate
+          ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
+          inlineValues: ${{ inputs.inlineValues }}
+          inlineSet: ${{ inputs.inlineSet }}
+      
+      - name: Load Deployment Vars
+        id: deployment-vars
+        shell: bash
+        run: |
+          set -e
+          ENVIRONMENT_SCOPE=review
+          BRANCH=$(node -e "process.stdout.write(JSON.parse(fs.readFileSync('$GITHUB_EVENT_PATH')).ref)")
+          BRANCH=${BRANCH#refs/heads/}
+          BRANCH=${BRANCH#refs/tags/}
+          BRANCH_SLUG=$(npx @socialgouv/env-slug "$BRANCH")
+          deployment_name="${ENVIRONMENT_SCOPE}-${BRANCH_SLUG}"
+          echo "deployment-name=$deployment_name">>$GITHUB_OUTPUT
+
+      - name: Clean deployment
+        uses: bobheadxi/deployments@v1
+        with:
+          step: deactivate-env
+          token: ${{ inputs.token }}
+          env: ${{ steps.deployment-vars.outputs.deployment-name }}
+          desc: Environment was pruned

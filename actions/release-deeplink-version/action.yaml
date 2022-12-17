@@ -1,0 +1,24 @@
+name: "Release DeepLink Version"
+description: "Deep replace linked version of components"
+inputs:
+  token:
+    description: "Github Token to push"
+    required: true
+  toolPath:
+    description: "toolPath"
+    required: true
+  version:
+    description: "version"
+    required: true
+  branch:
+    description: "branch, default to current"
+    required: false
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    GITHUB_TOKEN: ${{ inputs.token }}
+  args:  
+    - '${{ inputs.toolPath }}'
+    - '${{ inputs.version }}'
+    - '${{ inputs.branch }}'
