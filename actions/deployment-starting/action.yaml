@@ -1,0 +1,64 @@
+name: "Notify Github Starting Deployment 🎬"
+inputs:
+  environment-name:
+    description: "The deployment environment name"
+    required: true
+  multiple:
+    description: "Add branch slug suffix to environment name"
+    required: false
+  token:
+    description: "The Github authentication token"
+    required: true
+outputs:
+  deployment_id:
+    description: "Deployment id"
+    value: ${{ steps.deployment.outputs.deployment_id }}
+  deployment_name:
+    description: "Deployment name"
+    value: ${{ steps.deployment-vars.outputs.deployment_name }}
+runs:
+  using: "composite"
+  steps:
+    - name: Load Deployment Vars
+      id: deploymment-vars
+      shell: bash
+      env:
+        ENVIRONMENT_NAME: "${{ inputs.environment-name }}"
+        MULTIPLE: "${{ inputs.multiple }}"
+      run: |
+        set -e
+        if [ -n "$GITHUB_HEAD_REF" ]; then
+          BRANCH=$GITHUB_HEAD_REF
+        else
+          BRANCH=$GITHUB_REF
+        fi
+        BRANCH=${BRANCH#refs/heads/}
+        BRANCH=${BRANCH#refs/tags/}
+        
+        if [ "$MULTIPLE" = "" ]; then
+          if [ "$ENVIRONMENT_NAME" = "production" ] || [ "$ENVIRONMENT_NAME" = "preproduction" ]; then
+            MULTIPLE="false"
+          else
+            MULTIPLE="true"
+          fi
+        fi
+
+        if [ "$MULTIPLE" = "false" ]; then
+          DEPLOYMENT_NAME="${ENVIRONMENT_NAME}"
+        else
+          BRANCH_SLUG=$(npx @socialgouv/env-slug "$BRANCH")
+          DEPLOYMENT_NAME="${DEPLOYMENT_NAME}-${BRANCH_SLUG}"
+        fi
+        
+        echo "deployment_name=$DEPLOYMENT_NAME">>$GITHUB_OUTPUT
+
+    - name: Notify deployment start
+      uses: bobheadxi/deployments@v1
+      id: deployment
+      if: github.event_name != 'delete'
+      with:
+        step: start
+        token: ${{ inputs.token }}
+        override: true
+        desc: "Deploying environment: ${{ steps.deploymment-vars.outputs.deployment_name }}"
+        env: ${{ steps.deploymment-vars.outputs.deployment_name }}

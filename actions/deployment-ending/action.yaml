@@ -1,0 +1,40 @@
+name: "Notify Github Ending Deployment"
+inputs:
+  token:
+    description: "The Github authentication token"
+    required: true
+  deployment-id:
+    description: "Deployment id"
+    required: true
+  deployment-name:
+    description: "The deployment name"
+    required: true
+  deployment-url:
+    description: "The deployment url"
+    required: false
+outputs:
+  url:
+    description: "Main deployment URL"
+    value: ${{ steps.environment-url.outputs.url }}
+runs:
+  using: "composite"
+  steps:
+    - name: Notify deployment end
+      uses: bobheadxi/deployments@v1
+      if: github.event_name != 'delete' && env.DEPLOYMENT_OK == 'true'
+      with:
+        step: finish
+        status: ${{ job.status }}
+        token: ${{ inputs.token }}
+        env_url: ${{ inputs.deployment-url }}
+        env: ${{ inputs.deployment-name }}
+        deployment_id: ${{ inputs.deployment-id }}
+    
+    - name: Clean deployment
+      uses: bobheadxi/deployments@v1
+      if: github.event_name == 'delete'
+      with:
+        step: deactivate-env
+        token: ${{ inputs.token }}
+        env: ${{ inputs.deployment-name }}
+        desc: Environment was pruned

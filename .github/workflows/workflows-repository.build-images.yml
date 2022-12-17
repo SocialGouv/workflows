@@ -1,0 +1,40 @@
+name: Build Docker Images
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!master'
+    tags:
+      - 'v*.*.*'
+
+concurrency:
+  cancel-in-progress: true
+  group: build-docker-images-${{ github.ref_name }}
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - destination: "/actions"
+            dockerfile: actions/Dockerfile
+            context: actions
+          - destination: "/actions/debug-manifests/output"
+            dockerfile: actions/debug-manifests/output/Dockerfile
+            context: actions/debug-manifests/output
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Build image
+        uses: ./.github/actions/build-images
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          context: ${{ matrix.context }}
+          dockerfile: ${{ matrix.dockerfile }}
+          destination: ${{ matrix.destination }}

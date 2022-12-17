@@ -1,0 +1,24 @@
+name: Sync Major Version Branch
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+concurrency:
+  cancel-in-progress: true
+  group: sync-major-version-branch
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+          
+      - name: sync-major-version-branch
+        uses: socialgouv/workflows/release-deeplink-version@master
+        with:
+          token: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
+          toolPath: socialgouv/workflows
+          version: ${{ env.GITHUB_REF }}

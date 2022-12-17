@@ -1,0 +1,59 @@
+on:
+  workflow_call:
+    inputs:
+      webhookUri:
+        required: false
+        type: string
+      triggerWebhook:
+        required: false
+        type: boolean
+        default: true
+      chart:
+        required: false
+        type: string
+      ignoreProjectTemplates:
+        required: false
+        type: boolean
+      environment:
+        required: false
+        type: string
+      inlineValues:
+        required: false
+        type: string
+      inlineSet:
+        required: false
+        type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+      KUBEWEBHOOK_TOKEN:
+        required: true
+
+jobs:
+  deploy:
+    name: Custom Pipeline 🛸
+    runs-on: ubuntu-latest
+    environment: custom
+    steps:
+      - uses: socialgouv/kontinuous/.github/actions/deployment-starting@v1
+        id: deployment-starting
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@v1
+        continue-on-error: true
+        with:
+          webhookToken: ${{ secrets.KUBEWEBHOOK_TOKEN }}
+          webhookUri: ${{ inputs.webhookUri }}
+          triggerWebhook: ${{ inputs.triggerWebhook }}
+          chart: ${{ inputs.chart }}
+          ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
+          environment: ${{ inputs.environment }}
+          inlineValues: ${{ inputs.inlineValues }}
+          inlineSet: ${{ inputs.inlineSet }}
+      
+      - uses: socialgouv/workflows/actions/deployment-ending@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment_id: ${{ steps.deployment-starting.outputs.deployment_id }}
+          deployment_name: ${{ steps.deployment-starting.outputs.deployment_name }}
