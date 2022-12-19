@@ -26,10 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: custom
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@next-workflows
         continue-on-error: true
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           kubeconfig: ${{ secrets.KUBECONFIG }}
           chart: ${{ inputs.chart }}
           ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
