@@ -3,6 +3,11 @@ description: "Debug manifests generate output"
 inputs:
   path:
     description: "Your manifests YAML file path"
+
+outputs:
+  markdown-json:
+    description: "debug manifests markdown wrapped by json"
+
 runs:
   using: docker
   # image: Dockerfile

@@ -10,30 +10,55 @@ inputs:
   deployment-name:
     description: "The deployment name"
     required: true
+  deployment-ok:
+    description: "Deployment status"
+    required: true
   deployment-url:
     description: "The deployment url"
     required: false
+  manifests-path:
+    description: "The manifests.yaml file path"
+    required: false
+    default: "manifests.yaml"
+
 outputs:
   url:
     description: "Main deployment URL"
     value: ${{ steps.environment-url.outputs.url }}
+
 runs:
   using: "composite"
   steps:
     - uses: socialgouv/workflows/actions/debug-manifests@v1
+      id: debug-manifests
       with:
         token: ${{ inputs.token }}
-        path: "manifests.yaml"
+        path: ${{ inputs.manifests-path }}
         name: "manifests-${{ inputs.deployment-name }}.yaml"
+
+    - uses: jwalton/gh-find-current-pr@v1
+      id: finder
+
+    - name: ⛑ Comment PR
+      if: ${{ inputs.deployment-ok == 'true' }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        number: ${{ steps.finder.outputs.pr }}
+        recreate: true
+        message: |
+          🎉 Deployment for commit ${{ github.sha }} :
+          ${{ fromJSON(steps.debug-manifests.outputs.markdown-json).result }}
+        GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Define environment URL
       id: environment-url
       shell: bash
-      working-directory: ${{ env.KS_BUILD_PATH }}
+      env:
+        MANIFESTS_PATH: ${{ inputs.manifests-path }}
       run: |
         URL="${{ inputs.deployment-url }}"
         if [ "$URL" = "" ]; then
-          HOSTS=$(cat manifests.yaml | yq eval-all '.spec.rules[] .host')
+          HOSTS=$(cat "$MANIFESTS_PATH" | yq eval-all '.spec.rules[] .host')
           HOST=$(echo "$HOSTS" | head -n 1)
           URL="https://$HOST"
         fi
@@ -41,7 +66,7 @@ runs:
         
     - name: Notify deployment end
       uses: bobheadxi/deployments@v1
-      if: env.DEPLOYMENT_OK == 'true'
+      if: ${{ inputs.deployment-ok == 'true' }}
       with:
         step: finish
         status: ${{ job.status }}
@@ -52,6 +77,8 @@ runs:
     
     - name: Notify Final Status
       shell: bash
+      env:
+        DEPLOYMENT_OK: ${{ inputs.deployment-ok }}
       run: |
         if [ "$DEPLOYMENT_OK" != "true" ]; then
           echo "Pipeline failed ❌"

@@ -9,6 +9,12 @@ inputs:
   name:
     description: "Manifests artifact name"
     default: "manifests.yaml"
+
+outputs:
+  markdown-json:
+    description: "debug manifests markdown wrapped by json"
+    value: ${{ steps.debug-manifests-output.outputs.markdown-json }}
+
 runs:
   using: "composite"
   steps:
@@ -19,21 +25,7 @@ runs:
         path: ${{ inputs.path }}
 
     - name: Debug manifests
-      id: debug-manifests
+      id: debug-manifests-output
       uses: socialgouv/workflows/actions/debug-manifests/output@v1
       with:
         path: ${{ inputs.path }}
-
-    - uses: jwalton/gh-find-current-pr@v1
-      id: finder
-
-    - name: ⛑ Comment PR
-      if: env.DEPLOYMENT_OK == 'true'
-      uses: marocchino/sticky-pull-request-comment@v2
-      with:
-        number: ${{ steps.finder.outputs.pr }}
-        recreate: true
-        message: |
-          🎉 Deployment for commit ${{ github.sha }} :
-          ${{ fromJSON(env.DEBUG_MANIFESTS_MARKDOWN_JSON).result }}
-        GITHUB_TOKEN: ${{ inputs.token }}

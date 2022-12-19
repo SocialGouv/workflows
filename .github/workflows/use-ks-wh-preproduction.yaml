@@ -25,6 +25,7 @@ jobs:
           environment-scope: preproduction
 
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@next-workflows
+        id: deployment
         continue-on-error: true
         with:
           webhookToken: ${{ secrets.KUBEWEBHOOK_TOKEN }}
@@ -37,3 +38,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           deployment-id: ${{ steps.deployment-starting.outputs.deployment-id }}
           deployment-name: ${{ steps.deployment-starting.outputs.deployment-name }}
+          deployment-ok: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
