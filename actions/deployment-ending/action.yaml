@@ -25,6 +25,19 @@ runs:
         token: ${{ inputs.token }}
         path: "manifests.yaml"
         name: "manifests-${{ inputs.deployment-name }}.yaml"
+
+    - name: Define environment URL
+      id: environment-url
+      shell: bash
+      working-directory: ${{ env.KS_BUILD_PATH }}
+      run: |
+        URL="${{ inputs.deployment-url }}"
+        if [ "$URL" = "" ]; then
+          HOSTS=$(cat manifests.yaml | yq eval-all '.spec.rules[] .host')
+          HOST=$(echo "$HOSTS" | head -n 1)
+          URL="https://$HOST"
+        fi
+        echo "url=$URL">>$GITHUB_OUTPUT
         
     - name: Notify deployment end
       uses: bobheadxi/deployments@v1
@@ -33,7 +46,7 @@ runs:
         step: finish
         status: ${{ job.status }}
         token: ${{ inputs.token }}
-        env_url: ${{ inputs.deployment-url }}
+        env_url: ${{ steps.environment-url.outputs.url }}
         env: ${{ inputs.deployment-name }}
         deployment_id: ${{ inputs.deployment-id }}
     

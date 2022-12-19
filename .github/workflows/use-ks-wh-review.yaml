@@ -24,7 +24,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment-scope: review
 
-      - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@next-workflows/deploy-via-github-improved
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@next-workflows
         continue-on-error: true
         with:
           webhookToken: ${{ secrets.KUBEWEBHOOK_TOKEN }}
