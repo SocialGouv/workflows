@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: custom
     steps:
-      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@v1
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@next-workflows
         continue-on-error: true
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
