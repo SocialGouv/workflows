@@ -50,6 +50,6 @@ jobs:
         uses: bobheadxi/deployments@v1
         with:
           step: deactivate-env
-          token: ${{ inputs.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           env: ${{ steps.deployment-vars.outputs.deployment-name }}
           desc: Environment was pruned
