@@ -29,7 +29,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         
-      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@next-workflows
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@1.109.13-beta.1
         continue-on-error: true
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}

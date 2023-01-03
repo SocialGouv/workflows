@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: deactivate
     steps:
-      - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@next-workflows
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@1.109.13-beta.1
         continue-on-error: true
         with:
           webhookToken: ${{ secrets.KUBEWEBHOOK_TOKEN }}

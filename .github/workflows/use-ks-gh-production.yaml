@@ -19,7 +19,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment-scope: production
 
-      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@next-workflows
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@1.109.13-beta.1
         id: deployment
         continue-on-error: true
         with:
