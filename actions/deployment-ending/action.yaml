@@ -80,8 +80,17 @@ runs:
       env:
         DEPLOYMENT_OK: ${{ inputs.deployment-ok }}
       run: |
-        if [ "$DEPLOYMENT_OK" != "true" ]; then
-          echo "Pipeline failed ❌"
+        if [ "$DEPLOYMENT_OK" = "true" ]; then
+          exit 0
+        fi
+        
+        echo "Pipeline failed ❌"
+          
+        KS_DEPLOY_WRITE_OUTPUT_FILE=${KS_DEPLOY_WRITE_OUTPUT_FILE:-"kontinuous-deployment-output.log"}
+        if [ ! -f "$KS_DEPLOY_WRITE_OUTPUT_FILE" ]; then
           echo 'see previous steps to inspect full logs'
           exit 1
         fi
+
+        cat $KS_DEPLOY_WRITE_OUTPUT_FILE
+        exit 1
