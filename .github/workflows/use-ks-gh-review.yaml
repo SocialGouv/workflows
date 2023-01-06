@@ -23,7 +23,7 @@ jobs:
         id: deployment
         continue-on-error: true
         env:
-          KS_DEPLOY_WRITE_OUTPUT_FILE: "/tmp/kontinuous-deployment-output.log"
+          KS_DEPLOY_WRITE_OUTPUT_FILE: "kontinuous-deployment-output.log"
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           environment: dev
