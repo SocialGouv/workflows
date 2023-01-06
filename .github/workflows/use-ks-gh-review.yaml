@@ -22,11 +22,10 @@ jobs:
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@1.109.13-beta.1
         id: deployment
         continue-on-error: true
-        env:
-          KS_DEPLOY_WRITE_OUTPUT_FILE: "kontinuous-deployment-output.log"
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           environment: dev
+          deployWriteOutputFile: "kontinuous-deployment-output.log"
       
       - uses: socialgouv/workflows/actions/deployment-ending@v1
         with:
