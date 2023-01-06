@@ -86,7 +86,7 @@ runs:
         
         echo "Pipeline failed ❌"
           
-        KS_DEPLOY_WRITE_OUTPUT_FILE=${KS_DEPLOY_WRITE_OUTPUT_FILE:-"kontinuous-deployment-output.log"}
+        KS_DEPLOY_WRITE_OUTPUT_FILE=${KS_DEPLOY_WRITE_OUTPUT_FILE:-"/tmp/kontinuous-deployment-output.log"}
         if [ ! -f "$KS_DEPLOY_WRITE_OUTPUT_FILE" ]; then
           echo 'see previous steps to inspect full logs'
           exit 1
