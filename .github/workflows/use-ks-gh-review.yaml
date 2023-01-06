@@ -25,7 +25,7 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           environment: dev
-          deployWriteOutputFile: "kontinuous-deployment-output.log"
+          deployWriteOutputFile: "true"
       
       - uses: socialgouv/workflows/actions/deployment-ending@v1
         with:
