@@ -45,7 +45,7 @@ jobs:
         run: |
           set -e
           ENVIRONMENT_SCOPE=review
-          BRANCH=$(node -e "process.stdout.write(JSON.parse(fs.readFileSync('$GITHUB_EVENT_PATH')).ref)")
+          BRANCH=$(node -e "const githubEvent = JSON.parse(fs.readFileSync('$GITHUB_EVENT_PATH'));const ref = githubEvent.ref || githubEvent.pull_request?.head?.ref || '' ;process.stdout.write(ref);")
           BRANCH=${BRANCH#refs/heads/}
           BRANCH=${BRANCH#refs/tags/}
           BRANCH_SLUG=$(npx @socialgouv/env-slug "$BRANCH")
