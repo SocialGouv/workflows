@@ -19,6 +19,10 @@ on:
     secrets:
       KUBECONFIG:
         required: true
+      KS_SENTRY_DSN:
+        required: false
+      KS_NOTIFY_MATTERMOST_WEBHOOK_URL:
+        required: false
 
 jobs:
   deploy:
@@ -38,3 +42,5 @@ jobs:
           environment: ${{ inputs.environment }}
           inlineValues: ${{ inputs.inlineValues }}
           inlineSet: ${{ inputs.inlineSet }}
+          sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
+          notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
