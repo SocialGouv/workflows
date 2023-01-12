@@ -38,6 +38,7 @@ jobs:
           inlineSet: ${{ inputs.inlineSet }}
           sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
           notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
+          environment: dev
       
       - name: Load Deployment Vars
         id: deployment-vars

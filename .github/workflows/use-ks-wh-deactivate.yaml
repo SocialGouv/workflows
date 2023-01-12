@@ -38,6 +38,7 @@ jobs:
           ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
           inlineValues: ${{ inputs.inlineValues }}
           inlineSet: ${{ inputs.inlineSet }}
+          environment: dev
       
       - name: Load Deployment Vars
         id: deployment-vars
