@@ -34,7 +34,6 @@ jobs:
     environment: manual
     steps:
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@v1
-        continue-on-error: true
         with:
           webhookToken: ${{ secrets.KUBEWEBHOOK_TOKEN }}
           webhookUri: ${{ inputs.webhookUri }}
