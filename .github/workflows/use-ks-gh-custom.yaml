@@ -28,7 +28,6 @@ jobs:
   deploy:
     name: Custom Pipeline 🛸
     runs-on: ubuntu-latest
-    environment: custom
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

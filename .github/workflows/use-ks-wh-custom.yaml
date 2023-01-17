@@ -31,7 +31,6 @@ jobs:
   deploy:
     name: Custom Pipeline 🛸
     runs-on: ubuntu-latest
-    environment: custom
     steps:
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@v1
         with:

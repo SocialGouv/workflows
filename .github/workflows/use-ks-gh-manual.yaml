@@ -28,7 +28,6 @@ jobs:
   deploy:
     name: Manual Pipeline 👉
     runs-on: ubuntu-latest
-    environment: manual
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

@@ -26,7 +26,6 @@ jobs:
   deploy:
     name: Deactivate Pipeline ♻️
     runs-on: ubuntu-latest
-    environment: deactivate
     steps:
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@v1
         continue-on-error: true

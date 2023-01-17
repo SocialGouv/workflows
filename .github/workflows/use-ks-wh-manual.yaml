@@ -31,7 +31,6 @@ jobs:
   deploy:
     name: Manual Pipeline 👉
     runs-on: ubuntu-latest
-    environment: manual
     steps:
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@v1
         with:
