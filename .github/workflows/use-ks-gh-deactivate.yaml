@@ -63,7 +63,7 @@ jobs:
       - name: Clean review sub environment
         uses: bobheadxi/deployments@v1
         with:
-          step: deactivate-env
+          step: delete-env
           token: ${{ secrets.GITHUB_TOKEN }}
           env: ${{ steps.deployment-vars.outputs.deployment-name }}
           desc: Environment was pruned
