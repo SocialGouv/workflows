@@ -55,7 +55,7 @@ runs:
         echo "deployment-name=$deployment_name">>$GITHUB_OUTPUT
 
     - name: Notify deployment start
-      uses: bobheadxi/deployments@v1
+      uses: socialgouv/deployments@v1
       id: deployment
       if: github.event_name != 'delete'
       with:

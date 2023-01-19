@@ -53,7 +53,7 @@ jobs:
           echo "deployment-name=$deployment_name">>$GITHUB_OUTPUT
 
       - name: Clean deployment
-        uses: bobheadxi/deployments@v1
+        uses: socialgouv/deployments@v1
         with:
           step: deactivate-env
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
           desc: Deployment was pruned
       
       - name: Clean review sub environment
-        uses: bobheadxi/deployments@v1
+        uses: socialgouv/deployments@v1
         with:
           step: delete-env
           token: ${{ secrets.GITHUB_TOKEN }}
