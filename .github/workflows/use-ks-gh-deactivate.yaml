@@ -64,6 +64,6 @@ jobs:
         uses: socialgouv/deployments@v1
         with:
           step: delete-env
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
           env: ${{ steps.deployment-vars.outputs.deployment-name }}
           desc: Environment was pruned
