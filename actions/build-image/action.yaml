@@ -27,7 +27,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Get variables
       id: variables
@@ -46,9 +46,10 @@ runs:
         
         echo "repository-name=$REPOSITORY_NAME" >> $GITHUB_OUTPUT
         echo "image-name=$IMAGE_NAME" >> $GITHUB_OUTPUT
+
     - name: Create image labels and tags
       id: docker_meta
-      uses: "crazy-max/ghaction-docker-meta@2e1a5c7fa42123697f82d479b551a1bbdb1bef88"
+      uses: docker/metadata-action@v4
       with:
         images: ghcr.io/socialgouv/${{ steps.variables.outputs.image-name }}
         labels: |
@@ -63,21 +64,22 @@ runs:
           type=semver,pattern=${{ inputs.semver && 'v' || '' }}{{major}}.{{minor}}
           type=raw,value=${{ startsWith(github.ref, 'refs/tags/v') && 'prod' || inputs.environment }}
           type=raw,value=${{ startsWith(github.ref, 'refs/tags/v') && 'prod' || inputs.environment }}-${{ github.sha }}
+    
     - name: Set up Buildx
       id: buildx
-      uses: docker/setup-buildx-action@master
+      uses: docker/setup-buildx-action@v2
       with:
         install: true
 
     - name: Registry authentication
-      uses: docker/login-action@v1
+      uses: docker/login-action@v2
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ inputs.token }}
 
     - name: Image build and register
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3
       with:
         push: "true"
         file: "${{ inputs.dockerfile }}"
