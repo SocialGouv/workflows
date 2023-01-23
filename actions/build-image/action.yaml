@@ -20,6 +20,7 @@ inputs:
     description: "The deployment environment (dev | preprod | prod)"
   semver:
     description: "Set to 'true' to set image tag prefixed by 'v'"
+    default: true
 
 
 runs:
