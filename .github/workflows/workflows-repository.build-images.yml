@@ -29,7 +29,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build image
-        uses: ./actions/build-images
+        uses: ./actions/workflows-build-images
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           context: ${{ matrix.context }}
@@ -53,7 +53,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build image
-        uses: ./actions/build-images
+        uses: ./actions/workflows-build-images
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           context: ${{ matrix.context }}
