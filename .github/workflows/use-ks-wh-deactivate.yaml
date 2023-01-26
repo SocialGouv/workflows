@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@v1
+        id: deployment
         continue-on-error: true
         with:
           webhookToken: ${{ secrets.KUBEWEBHOOK_TOKEN }}
@@ -67,3 +68,23 @@ jobs:
           token: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
           env: ${{ steps.deployment-vars.outputs.deployment-name }}
           desc: Environment was pruned
+
+      - name: Report final status
+        shell: bash
+        env:
+          DEPLOYMENT_OK: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
+        run: |
+          if [ "$DEPLOYMENT_OK" = "true" ]; then
+            exit 0
+          fi
+          
+          echo "Pipeline failed ❌"
+          
+          cd $GITHUB_WORKSPACE
+          KS_DEPLOY_WRITE_OUTPUT_FILE=${KS_DEPLOY_WRITE_OUTPUT_FILE:-"kontinuous-deployment-output.log"}
+          if [ ! -f "$KS_DEPLOY_WRITE_OUTPUT_FILE" ]; then
+            echo 'see previous steps to inspect full logs'
+            exit 1
+          fi
+          cat $KS_DEPLOY_WRITE_OUTPUT_FILE
+          exit 1
