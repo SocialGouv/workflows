@@ -4,6 +4,9 @@ inputs:
   token:
     description: "The Github authentication token"
     required: true
+  pat:
+    description: "Alternative authentication token to allow cascade workflow triggering"
+    required: false
   deployment-id:
     description: "Deployment id"
     required: true
@@ -70,7 +73,7 @@ runs:
       with:
         step: finish
         status: ${{ job.status }}
-        token: ${{ inputs.token }}
+        token: ${{ inputs.pat || inputs.token }}
         env_url: ${{ steps.environment-url.outputs.url }}
         env: ${{ inputs.deployment-name }}
         deployment_id: ${{ inputs.deployment-id }}
