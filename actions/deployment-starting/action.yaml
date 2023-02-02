@@ -11,6 +11,9 @@ inputs:
   token:
     description: "The Github authentication token"
     required: true
+  pat:
+    description: "Alternative authentication token to allow cascade workflow triggering"
+    required: false
 outputs:
   deployment-id:
     description: "Deployment id"
@@ -60,7 +63,7 @@ runs:
       if: github.event_name != 'delete'
       with:
         step: start
-        token: ${{ inputs.token }}
+        token: ${{ inputs.pat || inputs.token }}
         override: true
         desc: "Deploying environment: ${{ steps.deployment-vars.outputs.deployment-name }}"
         env: ${{ steps.deployment-vars.outputs.deployment-name }}
