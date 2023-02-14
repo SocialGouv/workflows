@@ -55,6 +55,7 @@ jobs:
 
       - name: Clean deployment
         uses: socialgouv/deployments@v1
+        continue-on-error: true
         with:
           step: deactivate-env
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -63,6 +64,7 @@ jobs:
       
       - name: Clean review sub environment
         uses: socialgouv/deployments@v1
+        continue-on-error: true
         with:
           step: delete-env
           token: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
