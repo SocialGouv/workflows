@@ -18,8 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: actions/checkout@v3
-      
       - uses: socialgouv/workflows/actions/deployment-starting@v1
         id: deployment-starting
         with:
