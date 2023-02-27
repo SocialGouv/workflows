@@ -9,6 +9,13 @@ on:
       - "!master"
       - "!main"
       - "!dev"
+      - "!develop"
+      - "!**/persist"
+      - "!persist/**"
+      - "!**/persist/**"
+      - "!persist-**"
+      - "!**-persist"
+      - "!**-persist-**"
 
 jobs:
   kontinuous:

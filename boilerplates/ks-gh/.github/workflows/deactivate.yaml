@@ -10,6 +10,12 @@ on:
       - "!main"
       - "!dev"
       - "!develop"
+      - "!**/persist"
+      - "!persist/**"
+      - "!**/persist/**"
+      - "!persist-**"
+      - "!**-persist"
+      - "!**-persist-**"
 
 jobs:
   kontinuous:
