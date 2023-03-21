@@ -91,3 +91,4 @@ runs:
         labels: "${{ steps.docker_meta.outputs.labels }}"
         cache-from: "type=gha,scope=${{ steps.variables.outputs.image-name }}-cache"
         cache-to: "type=gha,scope=${{ steps.variables.outputs.image-name }}-cache,mode=max"
+        provenance: false
