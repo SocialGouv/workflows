@@ -63,7 +63,7 @@ runs:
           type=raw,value=sha-${{ github.sha }}
           type=semver,pattern=${{ inputs.semver && 'v' || '' }}{{major}}.{{minor}}
           type=raw,value=${{ startsWith(github.ref, 'refs/tags/v') && 'prod' || inputs.environment }}
-          type=raw,value=${{ startsWith(github.ref, 'refs/tags/v') && 'latest' || inputs.environment }}
+          type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
           type=raw,value=${{ startsWith(github.ref, 'refs/tags/v') && 'prod' || inputs.environment }}-${{ github.sha }}
           type=raw,value=${{ contains(github.ref, '/persist/') || startsWith(github.ref, 'persist/') || endsWith(github.ref, 'persist/') || contains(github.ref, '-persist-') || startsWith(github.ref, 'persist-') || endsWith(github.ref, '-persist') && 'persist' || inputs.environment }}-${{ github.sha }}
     
