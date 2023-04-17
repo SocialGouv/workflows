@@ -48,6 +48,6 @@ jobs:
   trivy:
     name: 🕵️ Trivy vulnerability scanner
     needs: [deploy]
-    uses: socialgouv/workflows/.github/workflows/use-trivy-scan@feat/trivy-scan
+    uses: socialgouv/workflows/.github/workflows/use-trivy-scan.yaml@feat/trivy-scan
     with:
       deployment-name: ${{ needs.deploy.outputs.deployment-name }}
