@@ -13,6 +13,7 @@ outputs:
 runs:
   using: docker
   # image: Dockerfile
-  image: docker://ghcr.io/socialgouv/workflows/actions/debug-manifests/output:v1
+  # image: docker://ghcr.io/socialgouv/workflows/actions/debug-manifests/output:v1
+  image: docker://ghcr.io/socialgouv/workflows/actions/debug-manifests/output:feat-trivy-scan
   args:  
     - '${{ inputs.path }}'
