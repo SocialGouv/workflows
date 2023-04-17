@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+const fs = require('fs')
+const yaml = require('yaml')
+const manifestsYaml = fs.readFileSync(0).toString()
+
+const manifests = yaml.parseAllDocuments(manifestsYaml, { prettyErrors: true })
+  .map((doc) => doc.toJSON())
+  .filter(Boolean)
+
+const images = Array.from(new Set(manifests.filter((m) => m.kind === 'Deployment' || m.kind === 'StatefulSet').flatMap((deploy) => [
+  ...deploy.spec.template.spec.containers.map(
+    (container) => container.image
+  ),
+  ...((deploy.spec.template.spec.initContainers &&
+        deploy.spec.template.spec.initContainers.map(
+          (container) => container.image
+        )) ||
+        [])
+]))).sort()
+
+process.stdout.write(JSON.stringify(images))

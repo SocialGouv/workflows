@@ -1,0 +1,37 @@
+name: "Trivy Scan on manifests"
+description: "Scan docker images present in kubernetes manifests for security issues"
+inputs:
+  images:
+    description: "images list in json format"
+    required: true
+  token:
+    description: "The Github authentication token"
+    required: true
+  severity:
+    description: "Trivy level of security"
+    default: "CRITICAL"
+
+runs:
+  using: "composite"
+  strategy:
+    fail-fast: false
+    max-parallel: 3
+    matrix:
+      imageRef: ${{ fromJson(input.images) }}
+  steps:
+    - name: Run Trivy vulnerability scanner
+      continue-on-error: true
+      timeout-minutes: 20
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: '${{ matrix.imageRef }}'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: '${{ intpus.severity }}'
+        
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+        token: '${{ inputs.token }}'

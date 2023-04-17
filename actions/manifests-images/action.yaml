@@ -1,0 +1,18 @@
+name: "Images from manifests"
+description: "Extract docker images list from manifests"
+inputs:
+  path:
+    description: "Your manifests YAML file path"
+    default: "manifests.yaml"
+
+outputs:
+  images:
+    description: "extracted docker images list in json format"
+
+runs:
+  using: docker
+  # image: docker://ghcr.io/socialgouv/workflows/actions/manifests-images:feat/trivy-scan
+  image: Dockerfile
+  # image: docker://ghcr.io/socialgouv/workflows/actions/manifests-images:v1
+  args:  
+    - '${{ inputs.path }}'
