@@ -35,7 +35,7 @@ jobs:
           environment: dev
           deployWriteOutputFile: "true"
       
-      - uses: socialgouv/workflows/actions/deployment-ending@feat/trivy-scan
+      - uses: socialgouv/workflows/actions/deployment-ending@v1
         with:
           pat: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
           token: ${{ secrets.GITHUB_TOKEN }}
