@@ -16,10 +16,10 @@ runs:
   steps:
     - name: Run Trivy vulnerability scanner
       continue-on-error: true
-      timeout-minutes: 20
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: '${{ inputs.image }}'
+        timeout-minutes: 20
         format: 'sarif'
         output: 'trivy-results.sarif'
         severity: '${{ intpus.severity }}'
