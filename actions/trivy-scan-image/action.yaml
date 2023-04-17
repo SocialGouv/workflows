@@ -22,7 +22,7 @@ runs:
         timeout-minutes: 20
         format: 'sarif'
         output: 'trivy-results.sarif'
-        severity: '${{ intpus.severity }}'
+        severity: '${{ inputs.severity }}'
         
 
     - name: Upload Trivy scan results to GitHub Security tab
