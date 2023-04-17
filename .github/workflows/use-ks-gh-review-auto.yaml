@@ -47,10 +47,7 @@ jobs:
 
   trivy:
     name: 🕵️ Trivy vulnerability scanner
-    runs-on: ubuntu-latest
     needs: [deploy]
-    # environment: review-auto
-    steps:
-      - uses: socialgouv/workflows/.github/workflows/use-trivy-scan@feat/trivy-scan
-        with:
-          deployment-name: ${{ needs.deploy.outputs.deployment-name }}
+    uses: socialgouv/workflows/.github/workflows/use-trivy-scan@feat/trivy-scan
+    with:
+      deployment-name: ${{ needs.deploy.outputs.deployment-name }}
