@@ -1,5 +1,4 @@
 FROM ghcr.io/socialgouv/workflows/actions:v1
-WORKDIR /opt/manifests-images
 COPY package.json yarn.lock ./
 RUN yarn --frozen-lockfile
 COPY entrypoint.sh /entrypoint.sh
