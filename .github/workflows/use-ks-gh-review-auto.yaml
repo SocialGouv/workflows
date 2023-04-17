@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: review-auto
     outputs:
-      deployment-name: ${{ steps.deployment-starting.outputs.deployment-name }}
       manifests-images: ${{ steps.deployment-ending.outputs.manifests-images }}
     steps:
       - name: Checkout repository
