@@ -10,7 +10,7 @@ on:
 
 jobs:
   deploy:
-    name: PreProduction Pipeline 😎
+    name: 🐳 Deploy PreProd on Kubernetes
     runs-on: ubuntu-latest
     environment: preproduction
     steps:

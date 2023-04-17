@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    name: Review Auto Pipeline 👓
+    name: 🐳 Deploy Review on Kubernetes
     runs-on: ubuntu-latest
     environment: review-auto
     outputs:
@@ -46,21 +46,11 @@ jobs:
           deployment-ok: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
 
   trivy:
-    name: Trivy vulnerability scanner 🕵️
+    name: 🕵️ Trivy vulnerability scanner
     runs-on: ubuntu-latest
     needs: [deploy]
     # environment: review-auto
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: socialgouv/workflows/.github/workflows/use-trivy-scan@feat/trivy-scan
         with:
-          name: "manifests-${{ needs.deploy.outputs.deployment-name }}.yaml"
-      
-      # - uses: socialgouv/workflows/actions/manifests-images@v1
-      - uses: socialgouv/workflows/actions/manifests-images@feat/trivy-scan
-        id: manifests-images
-
-      # - uses: socialgouv/workflows/actions/trivy-scan-manifests@v1
-      - uses: socialgouv/workflows/actions/trivy-scan-manifests@feat/trivy-scan
-        with:
-          images: ${{ steps.manifests-images.images }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-name: ${{ needs.deploy.outputs.deployment-name }}

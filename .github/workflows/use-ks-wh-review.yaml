@@ -14,7 +14,7 @@ on:
 
 jobs:
   deploy:
-    name: Review Pipeline 👀
+    name: 🐳 Deploy Review on Kubernetes
     runs-on: ubuntu-latest
     environment: review
     steps:

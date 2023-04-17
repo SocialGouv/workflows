@@ -1,0 +1,35 @@
+on:
+  workflow_call:
+    inputs:
+      deployment-name:
+        required: false
+        type: string
+    
+
+jobs:
+  images:
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: "manifests-${{ inputs.deployment-name }}.yaml"
+      
+      # - uses: socialgouv/workflows/actions/manifests-images@v1
+      - uses: socialgouv/workflows/actions/manifests-images@feat/trivy-scan
+        id: manifests-images
+
+  trivy-scan:
+    name: Trivy vulnerability scanner 🕵️
+    needs: [images]
+    runs-on: ubuntu-latest
+    # environment: review-auto
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        imageRef: ${{ fromJson(needs.images.manifests-images.images) }}
+    steps:
+      # - uses: socialgouv/workflows/actions/trivy-scan-image@v1
+      - uses: socialgouv/workflows/actions/trivy-scan-image@feat/trivy-scan
+        with:
+          image: ${{ matrix.imageRef }}
+          token: ${{ secrets.GITHUB_TOKEN }}
