@@ -5,6 +5,6 @@ cd $GITHUB_WORKSPACE
 
 MANIFESTS_PATH="$1"
 
-IMAGES=$(cat $MANIFESTS_PATH | manifests-images)
+IMAGES=$(cat $MANIFESTS_PATH | /opt/manifests-images)
 
 echo "images=$IMAGES" >> $GITHUB_OUTPUT
