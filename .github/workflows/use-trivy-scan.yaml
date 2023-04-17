@@ -8,6 +8,7 @@ on:
 
 jobs:
   images:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
         with:
@@ -18,7 +19,6 @@ jobs:
         id: manifests-images
 
   trivy-scan:
-    name: Trivy vulnerability scanner 🕵️
     needs: [images]
     runs-on: ubuntu-latest
     # environment: review-auto
