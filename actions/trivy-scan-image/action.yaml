@@ -22,13 +22,15 @@ runs:
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: '${{ inputs.image }}'
-        timeout: "20m"
-        format: 'sarif'
-        output: 'trivy-results.sarif'
         severity: '${{ inputs.severity }}'  
+        exit-code: '1'
+        timeout: "20m"
+        format: 'table'
+        # format: 'sarif'
+        # output: 'trivy-results.sarif'
 
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: 'trivy-results.sarif'
-        token: '${{ inputs.token }}'
+    # - name: Upload Trivy scan results to GitHub Security tab
+    #   uses: github/codeql-action/upload-sarif@v2
+    #   with:
+    #     sarif_file: 'trivy-results.sarif'
+    #     token: '${{ inputs.token }}'
