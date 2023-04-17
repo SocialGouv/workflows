@@ -16,6 +16,7 @@ echo "markdown-json=$MARKDOWN_JSON" >> $GITHUB_OUTPUT
 
 manifests_images=$(echo $JSON | jq .images)
 
+echo "manifests-images=$manifests_images"
 echo "manifests-images=$manifests_images" >> $GITHUB_OUTPUT
 
 echo "$MARKDOWN" >> $GITHUB_STEP_SUMMARY
