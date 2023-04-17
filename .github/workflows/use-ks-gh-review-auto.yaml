@@ -50,14 +50,12 @@ jobs:
     name: 🕵️ Trivy vulnerability scanner
     needs: [deploy]
     runs-on: ubuntu-latest
-    # environment: review-auto
     strategy:
       fail-fast: false
       max-parallel: 3
       matrix:
         imageRef: ${{ fromJson(needs.deploy.outputs.manifests-images) }}
     steps:
-      # - uses: socialgouv/workflows/actions/trivy-scan-image@v1
       - uses: socialgouv/workflows/actions/trivy-scan-image@feat/trivy-scan
         with:
           image: ${{ matrix.imageRef }}
