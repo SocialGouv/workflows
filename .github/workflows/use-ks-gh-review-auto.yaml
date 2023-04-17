@@ -16,6 +16,7 @@ jobs:
     environment: review-auto
     outputs:
       deployment-name: ${{ steps.deployment-starting.outputs.deployment-name }}
+      manifests-images: ${{ steps.deployment-ending.outputs.manifests-images }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -38,6 +39,7 @@ jobs:
           notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
       
       - uses: socialgouv/workflows/actions/deployment-ending@v1
+        id: deployment-ending
         with:
           pat: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,5 +51,18 @@ jobs:
     name: 🕵️ Trivy vulnerability scanner
     needs: [deploy]
     uses: socialgouv/workflows/.github/workflows/use-trivy-scan.yaml@feat/trivy-scan
-    with:
-      deployment-name: ${{ needs.deploy.outputs.deployment-name }}
+    name: 🕵️ Trivy scan
+    needs: [images]
+    runs-on: ubuntu-latest
+    # environment: review-auto
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        imageRef: ${{ fromJson(needs.deploy.outputs.manifests-images) }}
+    steps:
+      # - uses: socialgouv/workflows/actions/trivy-scan-image@v1
+      - uses: socialgouv/workflows/actions/trivy-scan-image@feat/trivy-scan
+        with:
+          image: ${{ matrix.imageRef }}
+          token: ${{ secrets.GITHUB_TOKEN }}

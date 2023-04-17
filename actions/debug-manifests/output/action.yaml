@@ -7,6 +7,8 @@ inputs:
 outputs:
   markdown-json:
     description: "debug manifests markdown wrapped by json"
+  manifests-images:
+    description: "docker images manifests from manifests as json format"
 
 runs:
   using: docker
