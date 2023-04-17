@@ -49,6 +49,9 @@ jobs:
           - destination: "/actions/debug-manifests/output"
             dockerfile: actions/debug-manifests/output/Dockerfile
             context: actions/debug-manifests/output
+          - destination: "/actions/manifests-images"
+            dockerfile: actions/manifests-images/Dockerfile
+            context: actions/manifests-images
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
