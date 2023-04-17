@@ -19,7 +19,7 @@ runs:
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: '${{ inputs.image }}'
-        timeout-minutes: 20
+        timeout: "20m"
         format: 'sarif'
         output: 'trivy-results.sarif'
         severity: '${{ inputs.severity }}'
