@@ -51,7 +51,6 @@ jobs:
     needs: [deploy]
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       max-parallel: 3
       matrix:
         imageRef: ${{ fromJson(needs.deploy.outputs.manifests-images) }}
