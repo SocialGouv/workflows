@@ -18,6 +18,6 @@ on:
       - "!**-persist-**"
 
 jobs:
-  kontinuous:
+  socialgouv:
     uses: socialgouv/workflows/.github/workflows/use-ks-wh-deactivate.yaml@v1
     secrets: inherit

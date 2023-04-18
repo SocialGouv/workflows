@@ -28,6 +28,9 @@ outputs:
   url:
     description: "Main deployment URL"
     value: ${{ steps.environment-url.outputs.url }}
+  manifests-images:
+    description: "docker images manifests from manifests as json format"
+    value: ${{ steps.debug-manifests.outputs.manifests-images }}
 
 runs:
   using: "composite"

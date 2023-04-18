@@ -7,12 +7,15 @@ on:
         required: false
       KS_NOTIFY_MATTERMOST_WEBHOOK_URL:
         required: false
+    
 
 jobs:
   deploy:
-    name: Review Auto Pipeline 👓
+    name: 🐳 Deploy Review on Kubernetes
     runs-on: ubuntu-latest
     environment: review-auto
+    outputs:
+      manifests-images: ${{ steps.deployment-ending.outputs.manifests-images }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -35,9 +38,25 @@ jobs:
           notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
       
       - uses: socialgouv/workflows/actions/deployment-ending@v1
+        id: deployment-ending
         with:
           pat: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
           token: ${{ secrets.GITHUB_TOKEN }}
           deployment-id: ${{ steps.deployment-starting.outputs.deployment-id }}
           deployment-name: ${{ steps.deployment-starting.outputs.deployment-name }}
           deployment-ok: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
+
+  trivy:
+    name: 🕵️ Trivy vulnerability scanner
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        imageRef: ${{ fromJson(needs.deploy.outputs.manifests-images) }}
+    steps:
+      - uses: socialgouv/workflows/actions/trivy-scan-image@v1
+        with:
+          image: ${{ matrix.imageRef }}
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -7,10 +7,13 @@ inputs:
 outputs:
   markdown-json:
     description: "debug manifests markdown wrapped by json"
+  manifests-images:
+    description: "docker images manifests from manifests as json format"
 
 runs:
   using: docker
-  # image: Dockerfile
   image: docker://ghcr.io/socialgouv/workflows/actions/debug-manifests/output:v1
+  # image: Dockerfile
+  
   args:  
     - '${{ inputs.path }}'
