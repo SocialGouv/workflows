@@ -35,7 +35,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: socialgouv/workflows/actions/debug-manifests@feat/trivy-scan
+    - uses: socialgouv/workflows/actions/debug-manifests@v1
       id: debug-manifests
       with:
         token: ${{ inputs.token }}

@@ -37,7 +37,7 @@ jobs:
           sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
           notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
       
-      - uses: socialgouv/workflows/actions/deployment-ending@feat/trivy-scan
+      - uses: socialgouv/workflows/actions/deployment-ending@v1
         id: deployment-ending
         with:
           pat: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
@@ -56,7 +56,7 @@ jobs:
       matrix:
         imageRef: ${{ fromJson(needs.deploy.outputs.manifests-images) }}
     steps:
-      - uses: socialgouv/workflows/actions/trivy-scan-image@feat/trivy-scan
+      - uses: socialgouv/workflows/actions/trivy-scan-image@v1
         with:
           image: ${{ matrix.imageRef }}
           token: ${{ secrets.GITHUB_TOKEN }}

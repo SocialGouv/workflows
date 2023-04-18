@@ -29,6 +29,6 @@ runs:
 
     - name: Debug manifests
       id: debug-manifests-output
-      uses: socialgouv/workflows/actions/debug-manifests/output@feat/trivy-scan
+      uses: socialgouv/workflows/actions/debug-manifests/output@v1
       with:
         path: ${{ inputs.path }}
