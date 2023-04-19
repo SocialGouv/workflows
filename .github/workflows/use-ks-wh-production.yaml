@@ -17,6 +17,8 @@ jobs:
     name: 🐳 Deploy Production on Kubernetes
     runs-on: ubuntu-latest
     environment: production
+    outputs:
+      manifests-images: ${{ steps.deployment-ending.outputs.manifests-images }}
     steps:
       - uses: socialgouv/workflows/actions/deployment-starting@v1
         id: deployment-starting
