@@ -13,6 +13,8 @@ jobs:
     name: 🐳 Deploy PreProd on Kubernetes
     runs-on: ubuntu-latest
     environment: preproduction
+    outputs:
+      manifests-images: ${{ steps.deployment-ending.outputs.manifests-images }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -33,7 +35,7 @@ jobs:
           deployWriteOutputFile: "true"
           sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
           notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
-      
+
       - uses: socialgouv/workflows/actions/deployment-ending@v1
         id: deployment-ending
         with:
@@ -42,7 +44,7 @@ jobs:
           deployment-id: ${{ steps.deployment-starting.outputs.deployment-id }}
           deployment-name: ${{ steps.deployment-starting.outputs.deployment-name }}
           deployment-ok: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
-  
+
   trivy:
     name: 🕵️ Trivy vulnerability scanner
     needs: [deploy]
