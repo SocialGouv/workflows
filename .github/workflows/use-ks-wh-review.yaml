@@ -17,6 +17,8 @@ jobs:
     name: 🐳 Deploy Review on Kubernetes
     runs-on: ubuntu-latest
     environment: review
+    outputs:
+      manifests-images: ${{ steps.deployment-ending.outputs.manifests-images }}
     steps:
       - uses: socialgouv/workflows/actions/deployment-starting@v1
         id: deployment-starting
@@ -34,7 +36,7 @@ jobs:
           triggerWebhook: ${{ inputs.triggerWebhook }}
           environment: dev
           deployWriteOutputFile: "true"
-      
+
       - uses: socialgouv/workflows/actions/deployment-ending@v1
         id: deployment-ending
         with:
