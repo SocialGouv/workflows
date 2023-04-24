@@ -13,6 +13,9 @@ inputs:
   vuln-type:
     description: "Trivy type of vuln. ex: os,library"
     default: "os"
+  config:
+    description: "Trivy additional config from file"
+    default: "trivy.yaml"
     
 runs:
   using: "composite"
@@ -26,6 +29,7 @@ runs:
         timeout: "20m"
         format: 'table'
         vuln-type: '${{ inputs.vuln-type }}' 
+        trivy-config: '${{ inputs.config }}'
         # format: 'sarif'
         # output: 'trivy-results.sarif'
     
