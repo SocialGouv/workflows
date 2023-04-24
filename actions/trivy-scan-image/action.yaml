@@ -10,10 +10,13 @@ inputs:
   severity:
     description: "Trivy level of security"
     default: "CRITICAL"
+  vuln-type:
+    description: "Trivy type of vuln. ex: os,library"
+    default: "os"
   config:
     description: "Trivy additional config from file"
     default: "trivy.yaml"
-
+    
 runs:
   using: "composite"
   steps:
@@ -25,8 +28,8 @@ runs:
         exit-code: '1'
         timeout: "20m"
         format: 'table'
+        vuln-type: '${{ inputs.vuln-type }}' 
         trivy-config: '${{ inputs.config }}'
-
         # format: 'sarif'
         # output: 'trivy-results.sarif'
     
