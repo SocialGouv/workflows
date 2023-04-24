@@ -10,6 +10,9 @@ inputs:
   severity:
     description: "Trivy level of security"
     default: "CRITICAL"
+  config:
+    description: "Trivy additional config from file"
+    default: "trivy.yaml"
 
 runs:
   using: "composite"
@@ -22,6 +25,8 @@ runs:
         exit-code: '1'
         timeout: "20m"
         format: 'table'
+        trivy-config: '${{ inputs.config }}'
+
         # format: 'sarif'
         # output: 'trivy-results.sarif'
     
