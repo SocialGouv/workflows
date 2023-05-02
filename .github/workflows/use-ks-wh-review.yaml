@@ -36,6 +36,7 @@ jobs:
           triggerWebhook: ${{ inputs.triggerWebhook }}
           environment: dev
           deployWriteOutputFile: "true"
+          projectName: ${{ vars.projectName }}
 
       - uses: socialgouv/workflows/actions/deployment-ending@v1
         id: deployment-ending

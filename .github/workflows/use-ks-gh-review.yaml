@@ -35,6 +35,7 @@ jobs:
           deployWriteOutputFile: "true"
           sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
           notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
+          projectName: ${{ vars.projectName }}
 
       - uses: socialgouv/workflows/actions/deployment-ending@v1
         id: deployment-ending

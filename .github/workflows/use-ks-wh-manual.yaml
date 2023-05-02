@@ -42,3 +42,4 @@ jobs:
           environment: ${{ inputs.environment }}
           inlineValues: ${{ inputs.inlineValues }}
           inlineSet: ${{ inputs.inlineSet }}
+          projectName: ${{ vars.projectName }}

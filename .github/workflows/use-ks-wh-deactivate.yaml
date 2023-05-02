@@ -39,6 +39,7 @@ jobs:
           inlineValues: ${{ inputs.inlineValues }}
           inlineSet: ${{ inputs.inlineSet }}
           environment: dev
+          projectName: ${{ vars.projectName }}
       
       - name: Load Deployment Vars
         id: deployment-vars
