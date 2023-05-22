@@ -40,6 +40,7 @@ jobs:
           notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
           environment: dev
           projectName: ${{ vars.KS_PROJECT_NAME }}
+          ciNamespace: ${{ vars.KS_CI_NAMESPACE }}
       
       - name: Load Deployment Vars
         id: deployment-vars
