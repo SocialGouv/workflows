@@ -18,6 +18,8 @@ runs:
 
   - name: Checkout repository
     uses: actions/checkout@v3
+    with:
+      persist-credentials: false
     
   - name: Semantic Release
     uses: cycjimmy/semantic-release-action@v3
