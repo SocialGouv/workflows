@@ -11,6 +11,9 @@ on:
       inlineSet:
         required: false
         type: string
+      kubeconfig:
+        required: false
+        type: string
     secrets:
       KUBECONFIG:
         required: true
@@ -31,7 +34,7 @@ jobs:
         id: deployment
         continue-on-error: true
         with:
-          kubeconfig: ${{ secrets.KUBECONFIG }}
+          kubeconfig: ${{ inputs.kubeconfig || secrets.KUBECONFIG }}
           chart: deactivate
           ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
           inlineValues: ${{ inputs.inlineValues }}

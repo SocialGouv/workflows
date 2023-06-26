@@ -30,7 +30,7 @@ jobs:
         id: deployment
         continue-on-error: true
         with:
-          kubeconfig: ${{ secrets.KUBECONFIG }}
+          kubeconfig: ${{ inputs.kubeconfig || secrets.KUBECONFIG }}
           environment: preprod
           deployWriteOutputFile: "true"
           sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
