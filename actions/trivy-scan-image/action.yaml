@@ -38,6 +38,7 @@ runs:
         path: trivy-results.sarif
         
     - name:
+      shell: bash
       run: |
         ls -la
         
