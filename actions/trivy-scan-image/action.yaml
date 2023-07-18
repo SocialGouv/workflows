@@ -29,7 +29,7 @@ runs:
         timeout: "20m"
         vuln-type: '${{ inputs.vuln-type }}' 
         trivy-config: '${{ inputs.config }}'
-        limit-severities-for-sarif: true
+        limit-severities-for-sarif: "true"
         format: 'sarif'
         output: 'trivy-results.sarif'
 
