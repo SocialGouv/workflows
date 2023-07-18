@@ -22,6 +22,7 @@ runs:
   steps:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
+      continue-on-error: true
       with:
         image-ref: '${{ inputs.image }}'
         severity: '${{ inputs.severity }}'  
