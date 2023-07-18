@@ -10,7 +10,16 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: revolunet-patch-4
-      - uses: ./actions/trivy-scan-image
+      - name: Scan domifa backend
+        uses: ./actions/trivy-scan-image
         with:
           image: harbor.fabrique.social.gouv.fr/domifa/domifa/backend:v2.131.14
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Scan BPCO site 
+        uses: ./actions/trivy-scan-image
+        with:
+          image: harbor.fabrique.social.gouv.fr/bpco-mieux/bpco-site/app:v1.4.9
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+
+
