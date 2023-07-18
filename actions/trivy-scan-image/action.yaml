@@ -31,12 +31,7 @@ runs:
         trivy-config: '${{ inputs.config }}'
         format: 'sarif'
         output: 'trivy-results.sarif'
-    
-    - uses: actions/upload-artifact@v3
-      with:
-        name: trivy-results
-        path: trivy-results.sarif
-        
+
     - name:
       shell: bash
       run: |
