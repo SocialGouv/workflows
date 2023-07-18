@@ -27,12 +27,20 @@ runs:
         severity: '${{ inputs.severity }}'  
         exit-code: '1'
         timeout: "20m"
-        format: 'table'
         vuln-type: '${{ inputs.vuln-type }}' 
         trivy-config: '${{ inputs.config }}'
         format: 'sarif'
         output: 'trivy-results.sarif'
     
+    - uses: actions/upload-artifact@v3
+      with:
+        name: trivy-results
+        path: trivy-results.sarif
+        
+    - name:
+      run: |
+        ls -la
+        
     # - name: Checkout repository
     #   uses: actions/checkout@v3
 
