@@ -12,7 +12,7 @@ inputs:
     default: "CRITICAL"
   vuln-type:
     description: "Trivy type of vuln. ex: os,library"
-    default: "os"
+    default: "os,library"
   config:
     description: "Trivy additional config from file"
     #default: "trivy.yaml"
@@ -27,6 +27,7 @@ runs:
         severity: '${{ inputs.severity }}'  
         exit-code: '1'
         timeout: "20m"
+        scanners: "vuln"
         vuln-type: '${{ inputs.vuln-type }}' 
         trivy-config: '${{ inputs.config }}'
         format: 'sarif'
