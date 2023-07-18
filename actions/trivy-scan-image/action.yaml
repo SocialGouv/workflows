@@ -34,7 +34,13 @@ runs:
         format: 'sarif'
         output: 'trivy-results.sarif'
         limit-severities-for-sarif: "true"
-
+    
+    
+    - uses: actions/upload-artifact@v3
+      with:
+        name: trivy-results
+        path: trivy-results.sarif
+        
     - name:
       shell: bash
       run: |
