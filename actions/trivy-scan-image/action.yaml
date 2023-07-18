@@ -52,3 +52,8 @@ runs:
       with:
         sarif_file: 'trivy-results.sarif'
         token: '${{ inputs.token }}'
+
+    - name: Force exit code
+      shell: bash
+      run: |
+        jq -e '.runs[] .results | select(length == 0)'  ./trivy-results.sarif
