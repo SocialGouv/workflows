@@ -12,32 +12,48 @@ inputs:
     default: "CRITICAL"
   vuln-type:
     description: "Trivy type of vuln. ex: os,library"
-    default: "os"
+    default: "os,library"
   config:
     description: "Trivy additional config from file"
-    default: "trivy.yaml"
+    #default: "trivy.yaml"
     
 runs:
   using: "composite"
   steps:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
+      continue-on-error: true
       with:
         image-ref: '${{ inputs.image }}'
         severity: '${{ inputs.severity }}'  
         exit-code: '1'
         timeout: "20m"
-        format: 'table'
+        scanners: "vuln"
         vuln-type: '${{ inputs.vuln-type }}' 
         trivy-config: '${{ inputs.config }}'
-        # format: 'sarif'
-        # output: 'trivy-results.sarif'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        limit-severities-for-sarif: "true"
     
-    # - name: Checkout repository
-    #   uses: actions/checkout@v3
+    
+    - uses: actions/upload-artifact@v3
+      with:
+        name: trivy-results
+        path: trivy-results.sarif
+        
+    - name:
+      shell: bash
+      run: |
+        pip install --quiet sarif-tools
+        sarif summary trivy-results.sarif
 
-    # - name: Upload Trivy scan results to GitHub Security tab
-    #   uses: github/codeql-action/upload-sarif@v2
-    #   with:
-    #     sarif_file: 'trivy-results.sarif'
-    #     token: '${{ inputs.token }}'
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+        token: '${{ inputs.token }}'
+
+    - name: Force exit code
+      shell: bash
+      run: |
+        jq -e '.runs[] .results | select(length == 0)'  ./trivy-results.sarif
