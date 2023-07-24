@@ -27,8 +27,6 @@ runs:
       extra_plugins: |
         @semantic-release/changelog@6.0.0
         @semantic-release/git@10.0.1
-      extends: |
-        @socialgouv/releaserc
     env:
       GITHUB_TOKEN: ${{ inputs.github-token }}
       GIT_AUTHOR_NAME: ${{ inputs.author-name }}
