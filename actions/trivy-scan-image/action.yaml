@@ -54,7 +54,7 @@ runs:
 
     - name: Force exit code
       shell: bash
-      continue-on-error: true
+      continue-on-error: true # dont mark as failed on GitHub atm
       run: |
         RES=$(jq '.runs[] .results | length' trivy-results.sarif)
         if [ "$RES" -ne "0" ]; then
