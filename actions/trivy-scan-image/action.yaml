@@ -58,6 +58,6 @@ runs:
       run: |
         RES=$(jq '.runs[] .results | length' trivy-results.sarif)
         if [ "$RES" -ne "0" ]; then
-          echo "\n\nWarning: $RES trivy issues detected\n\n"
+          echo -e "\n\nWarning: $RES trivy issues detected\n\n"
         fi
         exit "$RES"
