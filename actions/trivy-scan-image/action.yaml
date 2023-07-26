@@ -37,7 +37,7 @@ runs:
     
     - uses: actions/upload-artifact@v3
       with:
-        name: 'trivy-${{ hashFiles('trivy-results.sarif') }}'
+        name: "trivy-${{ hashFiles('trivy-results.sarif') }}"
         path: trivy-results.sarif
         
     - name:
