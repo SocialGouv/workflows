@@ -14,6 +14,8 @@ jobs:
     name: 🕵️ Trivy vulnerability scanner
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Scan ${{ matrix.image }}
         uses: ./actions/trivy-scan-image
         continue-on-error: true
