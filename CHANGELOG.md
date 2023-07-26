@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/SocialGouv/workflows/compare/v1.9.0...v1.9.1) (2023-07-26)
+
+
+### Bug Fixes
+
+* **trivy:** fix multiple artifact issue and exit code ([#26](https://github.com/SocialGouv/workflows/issues/26)) ([366d17f](https://github.com/SocialGouv/workflows/commit/366d17fc5ffca865568dd06c3fb87b2850185e8c))
+
 # [1.9.0](https://github.com/SocialGouv/workflows/compare/v1.8.3...v1.9.0) (2023-07-24)
 
 
