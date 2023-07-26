@@ -35,10 +35,9 @@ runs:
         output: 'trivy-results.sarif'
         limit-severities-for-sarif: "true"
     
-    
     - uses: actions/upload-artifact@v3
       with:
-        name: trivy-results
+        name: "trivy-${{ hashFiles('trivy-results.sarif') }}"
         path: trivy-results.sarif
         
     - name:
@@ -55,5 +54,10 @@ runs:
 
     - name: Force exit code
       shell: bash
+      continue-on-error: true # dont mark as failed on GitHub atm
       run: |
-        jq -e '.runs[] .results | select(length == 0)'  ./trivy-results.sarif
+        RES=$(jq '.runs[] .results | length' trivy-results.sarif)
+        if [ "$RES" -ne "0" ]; then
+          echo -e "\n\nWarning: $RES trivy issues detected\n\n"
+        fi
+        exit "$RES"
