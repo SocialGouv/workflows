@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/SocialGouv/workflows/compare/v1.9.1...v1.9.2) (2023-09-21)
+
+
+### Bug Fixes
+
+* release ([#27](https://github.com/SocialGouv/workflows/issues/27)) ([318bedc](https://github.com/SocialGouv/workflows/commit/318bedccc7c8c69e264c7182c1b6248aed4b3e68))
+
 ## [1.9.1](https://github.com/SocialGouv/workflows/compare/v1.9.0...v1.9.1) (2023-07-26)
 
 
