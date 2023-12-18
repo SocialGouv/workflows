@@ -91,7 +91,7 @@ jobs:
           KS_DEPLOY_WRITE_OUTPUT_FILE=${KS_DEPLOY_WRITE_OUTPUT_FILE:-"kontinuous-deployment-output.log"}
           if [ ! -f "$KS_DEPLOY_WRITE_OUTPUT_FILE" ]; then
             echo 'see previous steps to inspect full logs'
-            exit 0
+            exit 1
           fi
           cat $KS_DEPLOY_WRITE_OUTPUT_FILE
-          exit 0
+          exit 1
