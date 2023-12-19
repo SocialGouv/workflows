@@ -1,3 +1,10 @@
+## [1.9.3](https://github.com/SocialGouv/workflows/compare/v1.9.2...v1.9.3) (2023-12-19)
+
+
+### Bug Fixes
+
+* set fail status back for deactivate workflow ([#28](https://github.com/SocialGouv/workflows/issues/28)) ([5a9f0a5](https://github.com/SocialGouv/workflows/commit/5a9f0a5c9efd97b5e5617f911d422fbfb7525050))
+
 ## [1.9.2](https://github.com/SocialGouv/workflows/compare/v1.9.1...v1.9.2) (2023-09-21)
 
 
