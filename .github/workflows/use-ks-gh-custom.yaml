@@ -19,6 +19,9 @@ on:
       kubeconfig:
         required: false
         type: string
+      kubeconfigContext:
+        required: false
+        type: string
     secrets:
       KUBECONFIG:
         required: true
@@ -38,6 +41,7 @@ jobs:
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@v1
         with:
           kubeconfig: ${{ inputs.kubeconfig || secrets.KUBECONFIG }}
+          kubeconfigContext: ${{ inputs.kubeconfigContext }}
           chart: ${{ inputs.chart }}
           ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
           environment: ${{ inputs.environment }}

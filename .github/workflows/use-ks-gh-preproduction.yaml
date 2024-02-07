@@ -11,6 +11,9 @@ on:
       kubeconfig:
         required: false
         type: string
+      kubeconfigContext:
+        required: false
+        type: string
     
 
 jobs:
@@ -36,6 +39,7 @@ jobs:
         continue-on-error: true
         with:
           kubeconfig: ${{ inputs.kubeconfig || secrets.KUBECONFIG }}
+          kubeconfigContext: ${{ inputs.kubeconfigContext }}
           environment: preprod
           deployWriteOutputFile: "true"
           sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
