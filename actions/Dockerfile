@@ -32,7 +32,7 @@ RUN apt-get update && \
     libgraph-easy-perl \
     && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && \
-  apt-get install -yq --no-install-recommends \
+  DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     wget \
     && wget -qO- https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt-get install nodejs \
