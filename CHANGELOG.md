@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/SocialGouv/workflows/compare/v1.10.0...v1.11.0) (2024-03-18)
+
+
+### Features
+
+* add provider option to debug-links ([363f8b4](https://github.com/SocialGouv/workflows/commit/363f8b4f44581c0b063d26ef417871f65a87f2d0))
+
 # [1.10.0](https://github.com/SocialGouv/workflows/compare/v1.9.3...v1.10.0) (2024-02-07)
 
 
