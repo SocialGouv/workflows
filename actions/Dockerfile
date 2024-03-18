@@ -35,7 +35,7 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     wget \
     && wget -qO- https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
-    && apt-get install nodejs \
+    && DEBIAN_FRONTEND=noninteractive apt-get install nodejs -yq \
     && npm install -g yarn \
     && rm -rf /var/lib/apt/lists/*
 
