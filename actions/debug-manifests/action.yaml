@@ -9,6 +9,8 @@ inputs:
   name:
     description: "Manifests artifact name"
     default: "manifests.yaml"
+  provider:
+    description: "Plateform provider"
 
 outputs:
   markdown-json:
@@ -32,3 +34,4 @@ runs:
       uses: socialgouv/workflows/actions/debug-manifests/output@v1
       with:
         path: ${{ inputs.path }}
+        provider: ${{ inputs.provider }}

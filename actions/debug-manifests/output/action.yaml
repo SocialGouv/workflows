@@ -3,6 +3,9 @@ description: "Debug manifests generate output"
 inputs:
   path:
     description: "Your manifests YAML file path"
+  provider:
+    description: "Plateform provider"
+    required: false
 
 outputs:
   markdown-json:
@@ -17,3 +20,4 @@ runs:
   
   args:  
     - '${{ inputs.path }}'
+    - '${{ inputs.provider }}'

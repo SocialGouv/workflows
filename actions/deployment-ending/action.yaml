@@ -23,6 +23,9 @@ inputs:
     description: "The manifests.yaml file path"
     required: false
     default: "manifests.yaml"
+  provider:
+    description: "Plateform provider"
+    required: false
 
 outputs:
   url:
@@ -41,6 +44,7 @@ runs:
         token: ${{ inputs.token }}
         path: ${{ inputs.manifests-path }}
         name: "manifests-${{ inputs.deployment-name }}.yaml"
+        provider: ${{ inputs.provider }}
 
     - uses: jwalton/gh-find-current-pr@v1
       id: finder

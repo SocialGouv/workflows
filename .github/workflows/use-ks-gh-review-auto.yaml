@@ -54,6 +54,7 @@ jobs:
           deployment-id: ${{ steps.deployment-starting.outputs.deployment-id }}
           deployment-name: ${{ steps.deployment-starting.outputs.deployment-name }}
           deployment-ok: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
+          provider: ${{ steps.deployment.outputs.provider }}
 
   trivy:
     name: 🕵️ Trivy vulnerability scanner
