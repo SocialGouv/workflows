@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/SocialGouv/workflows/compare/v1.11.0...v1.11.1) (2024-03-18)
+
+
+### Bug Fixes
+
+* DEBIAN_FRONTEND=noninteractive ([03f39b2](https://github.com/SocialGouv/workflows/commit/03f39b26a1d9dcd717c1577fd50793ec5899e39b))
+
 # [1.11.0](https://github.com/SocialGouv/workflows/compare/v1.10.0...v1.11.0) (2024-03-18)
 
 
