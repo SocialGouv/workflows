@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/SocialGouv/workflows/compare/v1.12.0...v1.12.1) (2024-03-25)
+
+
+### Bug Fixes
+
+* revert ([302ba7f](https://github.com/SocialGouv/workflows/commit/302ba7f56d5e72f1cad7c76e0a01ad516d150a61))
+
 # [1.12.0](https://github.com/SocialGouv/workflows/compare/v1.11.2...v1.12.0) (2024-03-25)
 
 
