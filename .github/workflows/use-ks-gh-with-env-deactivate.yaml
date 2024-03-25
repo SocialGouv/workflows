@@ -1,0 +1,101 @@
+on:
+  workflow_call:
+    inputs:
+      ignoreProjectTemplates:
+        required: false
+        type: boolean
+        default: true
+      inlineValues:
+        required: false
+        type: string
+      inlineSet:
+        required: false
+        type: string
+      kubeconfig:
+        required: false
+        type: string
+      kubeconfigContext:
+        required: false
+        type: string
+    secrets:
+      KUBECONFIG:
+        required: true
+      KS_SENTRY_DSN:
+        required: false
+      KS_NOTIFY_MATTERMOST_WEBHOOK_URL:
+        required: false
+
+jobs:
+  deploy:
+    name: Deactivate Pipeline ♻️
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@v1
+        id: deployment
+        continue-on-error: true
+        with:
+          kubeconfig: ${{ inputs.kubeconfig || secrets.KUBECONFIG }}
+          kubeconfigContext: ${{ inputs.kubeconfigContext }}
+          chart: deactivate
+          ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
+          inlineValues: ${{ inputs.inlineValues }}
+          inlineSet: ${{ inputs.inlineSet }}
+          sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
+          notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
+          environment: dev
+          projectName: ${{ vars.KS_PROJECT_NAME }}
+          ciNamespace: ${{ vars.KS_CI_NAMESPACE }}
+      
+      - name: Load Deployment Vars
+        id: deployment-vars
+        shell: bash
+        run: |
+          set -e
+          ENVIRONMENT_SCOPE=review
+          BRANCH=$(node -e "const githubEvent = JSON.parse(fs.readFileSync('$GITHUB_EVENT_PATH'));const ref = githubEvent.ref || githubEvent.pull_request?.head?.ref || '' ;process.stdout.write(ref);")
+          BRANCH=${BRANCH#refs/heads/}
+          BRANCH=${BRANCH#refs/tags/}
+          BRANCH_SLUG=$(npx @socialgouv/env-slug "$BRANCH")
+          deployment_name="${ENVIRONMENT_SCOPE}-${BRANCH_SLUG}"
+          echo "deployment-name=$deployment_name">>$GITHUB_OUTPUT
+
+      - name: Clean deployment
+        uses: socialgouv/deployments@v1
+        continue-on-error: true
+        with:
+          step: deactivate-env
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ steps.deployment-vars.outputs.deployment-name }}
+          desc: Deployment was pruned
+      
+      - name: Clean review sub environment
+        uses: socialgouv/deployments@v1
+        continue-on-error: true
+        with:
+          step: delete-env
+          token: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
+          env: ${{ steps.deployment-vars.outputs.deployment-name }}
+          desc: Environment was pruned
+
+      - name: Report final status
+        shell: bash
+        env:
+          DEPLOYMENT_OK: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
+        run: |
+          if [ "$DEPLOYMENT_OK" = "true" ]; then
+            exit 0
+          fi
+          
+          echo "Pipeline failed ❌"
+          
+          cd $GITHUB_WORKSPACE
+          KS_DEPLOY_WRITE_OUTPUT_FILE=${KS_DEPLOY_WRITE_OUTPUT_FILE:-"kontinuous-deployment-output.log"}
+          if [ ! -f "$KS_DEPLOY_WRITE_OUTPUT_FILE" ]; then
+            echo 'see previous steps to inspect full logs'
+            exit 1
+          fi
+          cat $KS_DEPLOY_WRITE_OUTPUT_FILE
+          exit 1
