@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/SocialGouv/workflows/compare/v1.11.2...v1.12.0) (2024-03-25)
+
+
+### Features
+
+* with gh-with-env ([a8ef7b2](https://github.com/SocialGouv/workflows/commit/a8ef7b2f016742907906e91b8f5678175dcd4ac9))
+
 ## [1.11.2](https://github.com/SocialGouv/workflows/compare/v1.11.1...v1.11.2) (2024-03-18)
 
 
