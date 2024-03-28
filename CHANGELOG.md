@@ -1,3 +1,11 @@
+## [1.12.2](https://github.com/SocialGouv/workflows/compare/v1.12.1...v1.12.2) (2024-03-28)
+
+
+### Bug Fixes
+
+* disable gh env handling by default ([e5de2a6](https://github.com/SocialGouv/workflows/commit/e5de2a62bfc523cc2c49c5dd401de7b566bd144f))
+* disable gh env handling by default ([#29](https://github.com/SocialGouv/workflows/issues/29)) ([09f0a03](https://github.com/SocialGouv/workflows/commit/09f0a0301ebdc1b60f21cf23e8422e9dc9db692e))
+
 ## [1.12.1](https://github.com/SocialGouv/workflows/compare/v1.12.0...v1.12.1) (2024-03-25)
 
 
