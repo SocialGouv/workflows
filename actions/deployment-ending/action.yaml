@@ -26,6 +26,9 @@ inputs:
   provider:
     description: "Plateform provider"
     required: false
+  github-env-enabled:
+    description: "Enable handling of github env"
+    required: false
 
 outputs:
   url:
@@ -76,7 +79,7 @@ runs:
         
     - name: Notify deployment end
       uses: socialgouv/deployments@v1
-      if: ${{ inputs.deployment-ok == 'true' }}
+      if: ${{ inputs.deployment-ok == 'true' && inputs.github-env-enabled }}
       with:
         step: finish
         status: ${{ job.status }}

@@ -14,6 +14,9 @@ inputs:
   pat:
     description: "Alternative authentication token to allow cascade workflow triggering"
     required: false
+  github-env-enabled:
+    description: "Enable handling of github env"
+    required: false
 outputs:
   deployment-id:
     description: "Deployment id"
@@ -60,7 +63,7 @@ runs:
     - name: Notify deployment start
       uses: socialgouv/deployments@v1
       id: deployment
-      if: github.event_name != 'delete'
+      if: ${{ github.event_name != 'delete' && inputs.github-env-enabled }}
       with:
         step: start
         token: ${{ inputs.pat || inputs.token }}
