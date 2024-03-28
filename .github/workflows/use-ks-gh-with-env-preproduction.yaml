@@ -33,6 +33,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           pat: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
           environment-scope: preproduction
+          github-env-enabled: true
 
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@v1
         id: deployment
@@ -56,6 +57,7 @@ jobs:
           deployment-name: ${{ steps.deployment-starting.outputs.deployment-name }}
           deployment-ok: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
           provider: ${{ steps.deployment.outputs.provider }}
+          github-env-enabled: true
 
   trivy:
     name: 🕵️ Trivy vulnerability scanner
