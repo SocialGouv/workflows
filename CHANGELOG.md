@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/SocialGouv/workflows/compare/v1.12.2...v1.13.0) (2024-07-11)
+
+
+### Features
+
+* add custom prod workflow ([612b654](https://github.com/SocialGouv/workflows/commit/612b6547f227796e6237daf893d4b7a835d70b59))
+
 ## [1.12.2](https://github.com/SocialGouv/workflows/compare/v1.12.1...v1.12.2) (2024-03-28)
 
 
