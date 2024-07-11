@@ -1,0 +1,54 @@
+on:
+  workflow_call:
+    inputs:
+      chart:
+        required: false
+        type: string
+      ignoreProjectTemplates:
+        required: false
+        type: boolean
+      environment:
+        required: false
+        type: string
+      inlineValues:
+        required: false
+        type: string
+      inlineSet:
+        required: false
+        type: string
+      kubeconfig:
+        required: false
+        type: string
+      kubeconfigContext:
+        required: false
+        type: string
+    secrets:
+      KUBECONFIG:
+        required: true
+      KS_SENTRY_DSN:
+        required: false
+      KS_NOTIFY_MATTERMOST_WEBHOOK_URL:
+        required: false
+
+jobs:
+  deploy:
+    environment: production
+    name: Custom Pipeline 🛸
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@v1
+        with:
+          kubeconfig: ${{ inputs.kubeconfig || secrets.KUBECONFIG }}
+          kubeconfigContext: ${{ inputs.kubeconfigContext }}
+          chart: ${{ inputs.chart }}
+          ignoreProjectTemplates: ${{ inputs.ignoreProjectTemplates }}
+          environment: ${{ inputs.environment }}
+          inlineValues: ${{ inputs.inlineValues }}
+          inlineSet: ${{ inputs.inlineSet }}
+          sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
+          notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
+          projectName: ${{ vars.KS_PROJECT_NAME }}
+          ciNamespace: ${{ vars.KS_CI_NAMESPACE }}
