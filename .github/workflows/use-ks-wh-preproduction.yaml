@@ -8,6 +8,9 @@ on:
         required: false
         type: boolean
         default: true
+      disableTrivyScans:
+        required: false
+        type: boolean
     secrets:
       KUBEWEBHOOK_TOKEN:
         required: true
@@ -45,12 +48,15 @@ jobs:
           pat: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
           token: ${{ secrets.GITHUB_TOKEN }}
           deployment-id: ${{ steps.deployment-starting.outputs.deployment-id }}
-          deployment-name: ${{ steps.deployment-starting.outputs.deployment-name }}
-          deployment-ok: ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
+          deployment-name:
+            ${{ steps.deployment-starting.outputs.deployment-name }}
+          deployment-ok:
+            ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
 
   trivy:
     name: 🕵️ Trivy vulnerability scanner
     needs: [deploy]
+    if: ${{ ! inputs.disableTrivyScans }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
