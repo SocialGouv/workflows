@@ -1,3 +1,10 @@
+## [1.13.3](https://github.com/SocialGouv/workflows/compare/v1.13.2...v1.13.3) (2024-09-24)
+
+
+### Bug Fixes
+
+* disable trivy scans ([72090fc](https://github.com/SocialGouv/workflows/commit/72090fc4fae2b6e243e791d11d999b84d584443d))
+
 ## [1.13.2](https://github.com/SocialGouv/workflows/compare/v1.13.1...v1.13.2) (2024-07-26)
 
 
