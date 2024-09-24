@@ -8,9 +8,6 @@ on:
         required: false
         type: boolean
         default: true
-      disableTrivyScans:
-        required: false
-        type: boolean
     secrets:
       KUBEWEBHOOK_TOKEN:
         required: true
@@ -52,19 +49,3 @@ jobs:
             ${{ steps.deployment-starting.outputs.deployment-name }}
           deployment-ok:
             ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
-
-  trivy:
-    name: 🕵️ Trivy vulnerability scanner
-    needs: [deploy]
-    runs-on: ubuntu-latest
-    if: ${{ ! inputs.disableTrivyScans }}
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        imageRef: ${{ fromJson(needs.deploy.outputs.manifests-images) }}
-    steps:
-      - uses: socialgouv/workflows/actions/trivy-scan-image@v1
-        with:
-          image: ${{ matrix.imageRef }}
-          token: ${{ secrets.GITHUB_TOKEN }}
