@@ -1,3 +1,10 @@
+## [1.13.4](https://github.com/SocialGouv/workflows/compare/v1.13.3...v1.13.4) (2024-11-12)
+
+
+### Bug Fixes
+
+* up gh actions ([faabd02](https://github.com/SocialGouv/workflows/commit/faabd02b919ca3ad5bed5fa65568c0be568169a8))
+
 ## [1.13.3](https://github.com/SocialGouv/workflows/compare/v1.13.2...v1.13.3) (2024-09-24)
 
 
