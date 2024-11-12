@@ -27,7 +27,7 @@ jobs:
             context: actions
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Build image
         uses: ./actions/workflows-build-images
         with:
@@ -51,7 +51,7 @@ jobs:
             context: actions/debug-manifests/output
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Build image
         uses: ./actions/workflows-build-images
         with:

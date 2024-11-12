@@ -35,7 +35,7 @@ runs:
         output: 'trivy-results.sarif'
         limit-severities-for-sarif: "true"
     
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: "trivy-${{ hashFiles('trivy-results.sarif') }}"
         path: trivy-results.sarif
