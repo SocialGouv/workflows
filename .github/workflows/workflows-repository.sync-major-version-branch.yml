@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  id-token: write  # Required for OIDC token generation
+
 concurrency:
   cancel-in-progress: true
   group: sync-major-version-branch
@@ -13,17 +16,23 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-
       - name: Set vars
         id: vars
         run: |
           MAJOR_VERSION=$(echo "${GITHUB_REF#refs/*/}" | cut -d '.' -f 1)
           echo "major-version=$MAJOR_VERSION" >> $GITHUB_OUTPUT
       
+      - name: Get GitHub App Token
+        id: token
+        uses: SocialGouv/token-bureau@main
+        with:
+          token-bureau-url: https://token-bureau.fabrique.social.gouv.fr
+          audience: socialgouv
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
+          token: ${{ steps.token.outputs.token }}
 
       - name: sync-major-version-branch
         uses: socialgouv/workflows/actions/release-deeplink-version@v1
@@ -33,8 +42,7 @@ jobs:
           GIT_COMMITTER_EMAIL: ${{ secrets.SOCIALGROOVYBOT_EMAIL }}
           GIT_COMMITTER_NAME: ${{ secrets.SOCIALGROOVYBOT_NAME }}
         with:
-          token: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
-          # token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.token.outputs.token }}
           toolPath: socialgouv/workflows
           version: ${{ steps.vars.outputs.major-version }}
           branch: ${{ steps.vars.outputs.major-version }}

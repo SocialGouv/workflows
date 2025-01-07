@@ -12,6 +12,9 @@ on:
       KUBEWEBHOOK_TOKEN:
         required: true
 
+permissions:
+  id-token: write  # Required for OIDC token generation
+
 jobs:
   deploy:
     name: 🐳 Deploy Production on Kubernetes
@@ -20,11 +23,18 @@ jobs:
     outputs:
       manifests-images: ${{ steps.deployment-ending.outputs.manifests-images }}
     steps:
+      - name: Get GitHub App Token
+        id: token
+        uses: SocialGouv/token-bureau@main
+        with:
+          token-bureau-url: https://token-bureau.fabrique.social.gouv.fr
+          audience: socialgouv
+
       - uses: socialgouv/workflows/actions/deployment-starting@v1
         id: deployment-starting
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pat: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
+          pat: ${{ steps.token.outputs.token }}
           environment-scope: production
 
       - uses: socialgouv/kontinuous/.github/actions/deploy-via-webhook@v1
@@ -42,7 +52,7 @@ jobs:
       - uses: socialgouv/workflows/actions/deployment-ending@v1
         id: deployment-ending
         with:
-          pat: ${{ secrets.SOCIALGROOVYBOT_BOTO_PAT }}
+          pat: ${{ steps.token.outputs.token }}
           token: ${{ secrets.GITHUB_TOKEN }}
           deployment-id: ${{ steps.deployment-starting.outputs.deployment-id }}
           deployment-name:
