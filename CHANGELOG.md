@@ -1,3 +1,11 @@
+## [1.13.5](https://github.com/SocialGouv/workflows/compare/v1.13.4...v1.13.5) (2025-01-07)
+
+
+### Bug Fixes
+
+* **ci-cd:** use token-bureau ([3617668](https://github.com/SocialGouv/workflows/commit/3617668559806a13f73edff1b5c72f7f688c8aaa))
+* **ci-cd:** use token-bureau ([#30](https://github.com/SocialGouv/workflows/issues/30)) ([6be88b2](https://github.com/SocialGouv/workflows/commit/6be88b2e40d801a8e9d4d0712f9de823eabbea19))
+
 ## [1.13.4](https://github.com/SocialGouv/workflows/compare/v1.13.3...v1.13.4) (2024-11-12)
 
 
