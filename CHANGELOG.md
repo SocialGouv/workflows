@@ -1,3 +1,10 @@
+## [1.13.7](https://github.com/SocialGouv/workflows/compare/v1.13.6...v1.13.7) (2025-01-08)
+
+
+### Bug Fixes
+
+* perms ([49bc20a](https://github.com/SocialGouv/workflows/commit/49bc20ae763c4aad369dfdb671e02a87a18b9301))
+
 ## [1.13.6](https://github.com/SocialGouv/workflows/compare/v1.13.5...v1.13.6) (2025-01-08)
 
 
