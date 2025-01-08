@@ -38,9 +38,6 @@ outputs:
     description: "docker images manifests from manifests as json format"
     value: ${{ steps.debug-manifests.outputs.manifests-images }}
 
-permissions:
-  pull-requests: write
-
 runs:
   using: "composite"
   steps:
@@ -64,7 +61,7 @@ runs:
         message: |
           🎉 Deployment for commit ${{ github.sha }} :
           ${{ fromJSON(steps.debug-manifests.outputs.markdown-json).result }}
-        GITHUB_TOKEN: ${{ inputs.token }}
+        GITHUB_TOKEN: ${{ inputs.pat || inputs.token }}
 
     - name: Define environment URL
       id: environment-url
