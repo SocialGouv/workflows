@@ -1,3 +1,10 @@
+## [1.13.6](https://github.com/SocialGouv/workflows/compare/v1.13.5...v1.13.6) (2025-01-08)
+
+
+### Bug Fixes
+
+* sticky pull request comment permissions ([a066c5c](https://github.com/SocialGouv/workflows/commit/a066c5c9477c97f82f40b6974041b6588f15259a))
+
 ## [1.13.5](https://github.com/SocialGouv/workflows/compare/v1.13.4...v1.13.5) (2025-01-07)
 
 
