@@ -38,6 +38,9 @@ outputs:
     description: "docker images manifests from manifests as json format"
     value: ${{ steps.debug-manifests.outputs.manifests-images }}
 
+permissions:
+  pull-requests: write
+
 runs:
   using: "composite"
   steps:
