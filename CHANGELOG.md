@@ -1,3 +1,10 @@
+## [1.13.9](https://github.com/SocialGouv/workflows/compare/v1.13.8...v1.13.9) (2025-02-10)
+
+
+### Bug Fixes
+
+* private repo pr read ([e362317](https://github.com/SocialGouv/workflows/commit/e36231731eb2348fd11c404fa3335529db057b79))
+
 ## [1.13.8](https://github.com/SocialGouv/workflows/compare/v1.13.7...v1.13.8) (2025-02-10)
 
 
