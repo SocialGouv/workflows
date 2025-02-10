@@ -14,6 +14,7 @@ on:
 
 permissions:
   id-token: write  # Required for OIDC token generation
+  contents: read   # Required to checkout repository (when it's private)
 
 jobs:
   deploy:
