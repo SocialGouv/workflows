@@ -17,7 +17,8 @@ on:
 
 permissions:
   id-token: write  # Required for OIDC token generation
-  contents: read   # Required to checkout repository (when it's private)
+  contents: read   # Required to checkout repository
+  pull-requests: read  # Required for gh-find-current-pr action
 
 jobs:
   deploy:
