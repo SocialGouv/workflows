@@ -1,3 +1,10 @@
+## [1.14.2](https://github.com/SocialGouv/workflows/compare/v1.14.1...v1.14.2) (2025-05-22)
+
+
+### Bug Fixes
+
+* **buildkit:** add --opt attest:provenance ([c4d7a2e](https://github.com/SocialGouv/workflows/commit/c4d7a2e51289f3c4d868e6320134c6e2728b28eb))
+
 ## [1.14.1](https://github.com/SocialGouv/workflows/compare/v1.14.0...v1.14.1) (2025-05-22)
 
 
