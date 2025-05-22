@@ -288,6 +288,7 @@ runs:
             "$target_args" \
             $cache_options \
             --opt filename=./$INPUT_DOCKERFILE \
+            --opt attest:sbom= \
             --output type=image,\"name=$(echo "$INPUT_TAGS" | paste -sd ',' -)\",push=$INPUT_PUSH
         }
 
