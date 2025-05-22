@@ -111,7 +111,29 @@ runs:
         ARCH: ${{ runner.arch }}
         BUILDKIT_VERSION: ${{ inputs.buildkit-version }}
       run: |
-        wget -q "https://github.com/moby/buildkit/releases/download/$BUILDKIT_VERSION/buildkit-$BUILDKIT_VERSION.linux-$ARCH.tar.gz" && mkdir buildkit && cat buildkit-$BUILDKIT_VERSION.linux-$ARCH.tar.gz | tar -C buildkit -zxvf - && mv buildkit/bin/buildctl /usr/bin/buildctl && rm -rf buildkit
+        # Convert runner.arch to buildkit architecture format
+        case "$ARCH" in
+          X64)
+            BUILDKIT_ARCH="amd64"
+            ;;
+          X86)
+            BUILDKIT_ARCH="386"
+            ;;
+          ARM)
+            BUILDKIT_ARCH="arm"
+            ;;
+          ARM64)
+            BUILDKIT_ARCH="arm64"
+            ;;
+          *)
+            BUILDKIT_ARCH="$ARCH"
+            ;;
+        esac
+
+        wget -q "https://github.com/moby/buildkit/releases/download/$BUILDKIT_VERSION/buildkit-$BUILDKIT_VERSION.linux-$BUILDKIT_ARCH.tar.gz" && mkdir buildkit && cat buildkit-$BUILDKIT_VERSION.linux-$BUILDKIT_ARCH.tar.gz \
+          | tar -C buildkit -zxvf -
+        mv buildkit/bin/buildctl /usr/bin/buildctl
+        rm -rf buildkit
 
     - name: build and push
       shell: bash
