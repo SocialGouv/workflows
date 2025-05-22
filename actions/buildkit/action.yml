@@ -289,6 +289,7 @@ runs:
             $cache_options \
             --opt filename=./$INPUT_DOCKERFILE \
             --opt attest:sbom= \
+            --opt attest:provenance= \
             --output type=image,\"name=$(echo "$INPUT_TAGS" | paste -sd ',' -)\",push=$INPUT_PUSH
         }
 
