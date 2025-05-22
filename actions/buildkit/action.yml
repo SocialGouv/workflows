@@ -132,7 +132,16 @@ runs:
 
         wget -q "https://github.com/moby/buildkit/releases/download/$BUILDKIT_VERSION/buildkit-$BUILDKIT_VERSION.linux-$BUILDKIT_ARCH.tar.gz" && mkdir buildkit && cat buildkit-$BUILDKIT_VERSION.linux-$BUILDKIT_ARCH.tar.gz \
           | tar -C buildkit -zxvf -
-        mv buildkit/bin/buildctl /usr/bin/buildctl
+        
+        # Create a bin directory in the workspace
+        mkdir -p $GITHUB_WORKSPACE/bin
+        
+        # Move buildctl to the workspace bin directory
+        mv buildkit/bin/buildctl $GITHUB_WORKSPACE/bin/
+        
+        # Add to PATH using GitHub's recommended approach
+        echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+        
         rm -rf buildkit
 
     - name: build and push
