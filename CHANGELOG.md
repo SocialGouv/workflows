@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/SocialGouv/workflows/compare/v1.13.9...v1.14.0) (2025-05-22)
+
+
+### Features
+
+* buildkit action ([#32](https://github.com/SocialGouv/workflows/issues/32)) ([be1b96a](https://github.com/SocialGouv/workflows/commit/be1b96a77f9647184b363bb8c26d9c84b07f2f25))
+
 ## [1.13.9](https://github.com/SocialGouv/workflows/compare/v1.13.8...v1.13.9) (2025-02-10)
 
 
