@@ -284,7 +284,7 @@ runs:
             --opt platform=$INPUT_PLATFORMS \
             $(echo "$INPUT_BUILD_ARGS" | sed -r '/^\s*$/d' - | sed -r 's/(.*)/--opt build-arg:\1 \\/' -) \
             $(echo "$INPUT_LABELS" | sed -r '/^\s*$/d' - | sed -r 's/(.*)/--opt label:\1 \\/' -) \
-            "${secret_args[@]}" \
+            ${secret_args[@]} \
             "$target_args" \
             $cache_options \
             --opt filename=./$INPUT_DOCKERFILE \
