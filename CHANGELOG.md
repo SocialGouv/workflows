@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/SocialGouv/workflows/compare/v1.14.0...v1.14.1) (2025-05-22)
+
+
+### Bug Fixes
+
+* **buildkit:** add --opt attest:sbom ([52d00f5](https://github.com/SocialGouv/workflows/commit/52d00f5f211c4e83beaff823c4dc453b98eeb2b3))
+
 # [1.14.0](https://github.com/SocialGouv/workflows/compare/v1.13.9...v1.14.0) (2025-05-22)
 
 
