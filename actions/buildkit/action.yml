@@ -131,7 +131,7 @@ runs:
         esac
 
         wget -q "https://github.com/moby/buildkit/releases/download/$BUILDKIT_VERSION/buildkit-$BUILDKIT_VERSION.linux-$BUILDKIT_ARCH.tar.gz" && mkdir buildkit && cat buildkit-$BUILDKIT_VERSION.linux-$BUILDKIT_ARCH.tar.gz \
-          | tar -C buildkit -zxvf -
+          | tar -C buildkit -zxf -
         
         # Create a bin directory in the workspace
         mkdir -p $GITHUB_WORKSPACE/bin
