@@ -1,0 +1,275 @@
+name: 'Buildkit build and push image'
+description: 'Build docker image using buildkits buildctl'
+inputs:
+  path:
+    description: 'Root directory'
+    required: false
+    default: '.'
+  context:
+    description: 'Folder to use as context during image build'
+    required: false
+    default: '.'
+  dockerfile:
+    description: 'Dockerfile path to use for the build'
+    required: false
+    default: 'Dockerfile'
+  platforms:
+    description: 'Platform(s) that the image should be build for, multiple platforms can be specified comma separated (linux/amd64,linux/arm64)'
+    required: true
+    default: 'linux/amd64'
+  tags:
+    description: 'Tags to build to the image'
+    required: true
+    default: ''
+  labels:
+    description: 'Labels for the image'
+    required: false
+    default: ''
+  buildkit-daemon-address:
+    description: 'Address of the buildkit daemon to use'
+    required: true
+    default: 'tcp://buildkit-service.buildkit-service.svc:1234'
+  buildkit-cert-ca-file:
+    description: 'The ca certificate file to use for the buildkit client'
+    required: false
+    default: '/buildkit-certs/ca.pem'
+  buildkit-cert-file:
+    description: 'The certificate file to use for the buildkit client'
+    required: false
+    default: '/buildkit-certs/cert.pem'
+  buildkit-cert-key-file:
+    description: 'The certificate key file to use for the buildkit client'
+    required: false
+    default: '/buildkit-certs/key.pem'
+  buildkit-cert-ca:
+    description: 'The ca certificate content to use for the buildkit client (inline)'
+    required: false
+  buildkit-cert:
+    description: 'The certificate content to use for the buildkit client (inline)'
+    required: false
+  buildkit-cert-key:
+    description: 'The certificate key content to use for the buildkit client (inline)'
+    required: false
+  buildkit-svc-count:
+    description: 'Number of buildkit services for modulo distribution'
+    required: false
+    default: '6'
+  buildkit-service-enabled:
+    description: 'Toggle buildkit service usage'
+    required: false
+    default: 'true'
+  fallback-enabled:
+    description: 'Enable fallback to local buildkit when service is unavailable'
+    required: false
+    default: 'false'
+  git-default-branch:
+    description: 'Default git branch for caching'
+    required: false
+    default: 'main'
+  cache-enabled:
+    description: 'Enable build cache'
+    required: false
+    default: 'true'
+  cache-from-refs:
+    description: 'Additional cache references to import from (comma separated)'
+    required: false
+  cache-to-refs:
+    description: 'Additional cache references to export to (comma separated)'
+    required: false
+  push:
+    description: 'Defines whether the image should be pushed to the registry or not, default is true'
+    required: false
+    default: "true"
+  build-args:
+    description: 'Build arguments to be passed to the build'
+    required: false
+  target:
+    description: 'Build stage to build'
+    required: false
+  secrets:
+    description: 'Build secrets to be passed to the build'
+    required: false
+  registry:
+    description: 'The docker registry to push built images'
+    required: false
+  registry-username:
+    description: 'The docker registry user'
+    required: false
+  registry-password:
+    description: 'The docker registry password'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_SECRET: ${{ inputs.secrets }}
+        INPUT_REGISTRY: ${{ inputs.registry }}
+        INPUT_REGISTRY_USERNAME: ${{ inputs.registry-username }}
+        INPUT_REGISTRY_PASSWORD: ${{ inputs.registry-password }}
+        INPUT_TARGET: ${{ inputs.target }}
+        INPUT_BUILDKIT_DAEMON_ADDRESS: ${{ inputs.buildkit-daemon-address }}
+        INPUT_BUILDKIT_CERT_CA_FILE: ${{ inputs.buildkit-cert-ca-file }}
+        INPUT_BUILDKIT_CERT_FILE: ${{ inputs.buildkit-cert-file }}
+        INPUT_BUILDKIT_CERT_KEY_FILE: ${{ inputs.buildkit-cert-key-file }}
+        INPUT_BUILDKIT_CERT_CA: ${{ inputs.buildkit-cert-ca }}
+        INPUT_BUILDKIT_CERT: ${{ inputs.buildkit-cert }}
+        INPUT_BUILDKIT_CERT_KEY: ${{ inputs.buildkit-cert-key }}
+        INPUT_BUILDKIT_SVC_COUNT: ${{ inputs.buildkit-svc-count }}
+        INPUT_BUILDKIT_SERVICE_ENABLED: ${{ inputs.buildkit-service-enabled }}
+        INPUT_FALLBACK_ENABLED: ${{ inputs.fallback-enabled }}
+        INPUT_GIT_DEFAULT_BRANCH: ${{ inputs.git-default-branch }}
+        INPUT_CACHE_ENABLED: ${{ inputs.cache-enabled }}
+        INPUT_CACHE_FROM_REFS: ${{ inputs.cache-from-refs }}
+        INPUT_CACHE_TO_REFS: ${{ inputs.cache-to-refs }}
+        INPUT_CONTEXT: ${{ inputs.context }}
+        INPUT_DOCKERFILE: ${{ inputs.dockerfile }}
+        INPUT_PLATFORMS: ${{ inputs.platforms }}
+        INPUT_LABELS: ${{ inputs.labels }}
+        INPUT_BUILD_ARGS: ${{ inputs.build-args }}
+        INPUT_TAGS: ${{ inputs.tags }}
+        INPUT_PUSH: ${{ inputs.push }}
+      run: |
+        cd "$INPUT_PATH"
+
+        # handle secrets to args
+        declare -a secret_args
+        while IFS='=' read -r key val; do
+          if [[ -n "$key" && -n "$val" ]]; then
+            val="${val%\'*}"
+            val="${val%\"*}"
+            val="${val#\'}"
+            val="${val#\"}"
+            export SECRET_ENV_${key}="${val}"
+            secret_args+=("--secret id=${key},env=SECRET_ENV_${key}")
+          fi
+        done <<< "$INPUT_SECRETS"
+
+        # login to docker registry
+        export DOCKER_CONFIG=~/.docker
+        if [ -n "$INPUT_REGISTRY" ]; then
+          mkdir -p $DOCKER_CONFIG
+          echo "{\"auths\":{\"$INPUT_REGISTRY\":{\"username\":\"$INPUT_REGISTRY_USERNAME\",\"password\":\"$INPUT_REGISTRY_PASSWORD\"}}}" > $DOCKER_CONFIG/config.json
+        fi
+
+        target_args=""
+        if [ -n "$INPUT_TARGET" ]; then
+          target_args="--target=$INPUT_TARGET"
+        fi
+
+        # Setup cache options
+        cache_options=""
+        if [ "$INPUT_CACHE_ENABLED" = "true" ]; then
+          # Extract first tag for cache reference
+          first_tag=$(echo "$INPUT_TAGS" | cut -d ',' -f 1)
+          
+          # Import cache from default branch
+          cache_options="--import-cache type=registry,ref=$first_tag:cache-$INPUT_GIT_DEFAULT_BRANCH"
+          
+          # Import cache from additional refs if provided
+          if [ -n "$INPUT_CACHE_FROM_REFS" ]; then
+            IFS=',' read -ra CACHE_REFS <<< "$INPUT_CACHE_FROM_REFS"
+            for ref in "${CACHE_REFS[@]}"; do
+              cache_options="$cache_options --import-cache type=registry,ref=$ref"
+            done
+          fi
+          
+          # Export cache if specified
+          if [ -n "$INPUT_CACHE_TO_REFS" ]; then
+            IFS=',' read -ra CACHE_REFS <<< "$INPUT_CACHE_TO_REFS"
+            for ref in "${CACHE_REFS[@]}"; do
+              cache_options="$cache_options --export-cache type=registry,mode=max,image-manifest=true,ignore-error=true,ref=$ref"
+            done
+          fi
+        fi
+
+        # Apply modulo distribution if enabled
+        buildkit_addr="$INPUT_BUILDKIT_DAEMON_ADDRESS"
+        if [ -n "$INPUT_BUILDKIT_SVC_COUNT" ] && [ "$INPUT_BUILDKIT_SVC_COUNT" -gt 0 ]; then
+          # Extract image name from tags for hashing
+          image_name=$(echo "$INPUT_TAGS" | cut -d ':' -f 1)
+          
+          # Calculate pod number using consistent hashing
+          pod_hash_ref="$image_name"
+          pod_num=$(( 0x$(echo "$pod_hash_ref" | md5sum | cut -d ' ' -f 1 | head -c 15) ))
+          [ $pod_num -lt 0 ] && pod_num=$((pod_num * -1))
+          pod_num=$(( $pod_num % $INPUT_BUILDKIT_SVC_COUNT ))
+          
+          # Modify buildkit address to target specific numbered subdomain
+          prefix_addr="${buildkit_addr%%.*}"
+          protocol="${prefix_addr%%://*}"
+          subdomain="${prefix_addr#*//}"
+          
+          buildkit_addr=$(echo "$buildkit_addr" | sed "s|$prefix_addr|$protocol://$subdomain-$pod_num.$subdomain|")
+          echo "Using buildkit service: $buildkit_addr"
+        fi
+
+        # Define buildctl command based on service enabled flag
+        buildctl_cmd="buildctl"
+        buildctl_mtls_options=""
+        
+        if [ "$INPUT_BUILDKIT_SERVICE_ENABLED" = "true" ]; then
+          buildctl_cmd="buildctl --addr $buildkit_addr"
+          
+          # Handle TLS certificates (file-based or inline)
+          if [ -n "$INPUT_BUILDKIT_CERT_CA" ] && [ -n "$INPUT_BUILDKIT_CERT" ] && [ -n "$INPUT_BUILDKIT_CERT_KEY" ]; then
+            # Use inline certificates
+            cert_dir=$(mktemp -d)
+            echo "$INPUT_BUILDKIT_CERT_CA" > "$cert_dir/ca.pem"
+            echo "$INPUT_BUILDKIT_CERT" > "$cert_dir/cert.pem"
+            echo "$INPUT_BUILDKIT_CERT_KEY" > "$cert_dir/key.pem"
+            buildctl_mtls_options="--tlscacert $cert_dir/ca.pem --tlscert $cert_dir/cert.pem --tlskey $cert_dir/key.pem"
+          else
+            # Use file-based certificates
+            buildctl_mtls_options="--tlscacert $INPUT_BUILDKIT_CERT_CA_FILE --tlscert $INPUT_BUILDKIT_CERT_FILE --tlskey $INPUT_BUILDKIT_CERT_KEY_FILE"
+          fi
+        else
+          buildctl_cmd="buildctl-daemonless.sh"
+        fi
+
+        # Function to run buildctl with all options
+        runBuildctl() {
+          local cmd="$1"
+          local mtls_options="$2"
+          
+          $cmd $mtls_options build \
+            --frontend dockerfile.v0 \
+            --local context=$INPUT_CONTEXT \
+            --local dockerfile=$INPUT_CONTEXT \
+            --opt platform=$INPUT_PLATFORMS \
+            $(echo "$INPUT_BUILD_ARGS" | sed -r '/^\s*$/d' - | sed -r 's/(.*)/--opt build-arg:\1 \\/' -) \
+            $(echo "$INPUT_LABELS" | sed -r '/^\s*$/d' - | sed -r 's/(.*)/--opt label:\1 \\/' -) \
+            "${secret_args[@]}" \
+            "$target_args" \
+            $cache_options \
+            --opt filename=./$INPUT_DOCKERFILE \
+            --output type=image,\"name=$(echo "$INPUT_TAGS" | paste -sd ',' -)\",push=$INPUT_PUSH
+        }
+
+        # Create temporary file for capturing output
+        tempfile=$(mktemp)
+        
+        # Run buildctl and capture output
+        set +e
+        runBuildctl "$buildctl_cmd" "$buildctl_mtls_options" 2>&1 | tee "$tempfile"
+        status=$?
+        set -e
+
+        # Handle fallback if enabled and needed
+        if [ "$INPUT_FALLBACK_ENABLED" = "true" ] && [ "$status" -ne 0 ]; then
+          echo "Command failed. Checking if fallback is needed..."
+          if grep -q -e "listing workers for Build: failed to list workers: Unavailable" -e "closing transport due to: connection error" "$tempfile"; then
+            echo "buildkit service unavailable, falling back to local build"
+            # Use buildctl-daemonless.sh instead
+            buildctl_cmd="buildctl-daemonless.sh"
+            buildctl_mtls_options=""
+            runBuildctl "$buildctl_cmd" "$buildctl_mtls_options"
+          else
+            exit $status
+          fi
+        elif [ "$status" -ne 0 ]; then
+          exit $status
+        fi
+
+        echo "Build succeeded."
