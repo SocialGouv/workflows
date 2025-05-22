@@ -98,10 +98,23 @@ inputs:
   registry-password:
     description: 'The docker registry password'
     required: false
+  buildkit-version:
+    description: 'The buildkit version to use'
+    required: false
+    default: 'v0.22.0'
 runs:
   using: 'composite'
   steps:
-    - shell: bash
+    - name: install buildkit
+      shell: bash
+      env:
+        ARCH: ${{ runner.arch }}
+        BUILDKIT_VERSION: ${{ inputs.buildkit-version }}
+      run: |
+        wget -q "https://github.com/moby/buildkit/releases/download/$BUILDKIT_VERSION/buildkit-$BUILDKIT_VERSION.linux-$ARCH.tar.gz" && mkdir buildkit && cat buildkit-$BUILDKIT_VERSION.linux-$ARCH.tar.gz | tar -C buildkit -zxvf - && mv buildkit/bin/buildctl /usr/bin/buildctl && rm -rf buildkit
+
+    - name: build and push
+      shell: bash
       env:
         INPUT_PATH: ${{ inputs.path }}
         INPUT_SECRET: ${{ inputs.secrets }}
