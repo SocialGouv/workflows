@@ -1,0 +1,70 @@
+on:
+  workflow_call:
+    secrets:
+      KUBECONFIG:
+        required: true
+      KS_SENTRY_DSN:
+        required: false
+      KS_NOTIFY_MATTERMOST_WEBHOOK_URL:
+        required: false
+    inputs:
+      kubeconfig:
+        required: false
+        type: string
+      kubeconfigContext:
+        required: false
+        type: string
+
+permissions:
+  id-token: write  # Required for OIDC token generation
+  contents: read   # Required to checkout repository
+  pull-requests: read  # Required for gh-find-current-pr action (when it's private)
+
+jobs:
+  deploy:
+    name: 🐳 Deploy PreProd on Kubernetes
+    runs-on: ubuntu-latest
+    outputs:
+      manifests-images: ${{ steps.deployment-ending.outputs.manifests-images }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get GitHub App Token
+        id: token
+        uses: SocialGouv/token-bureau@main
+        with:
+          token-bureau-url: https://token-bureau.fabrique.social.gouv.fr
+          audience: socialgouv
+
+      - uses: socialgouv/workflows/actions/deployment-starting@v1
+        id: deployment-starting
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pat: ${{ steps.token.outputs.token }}
+          environment-scope: preproduction
+
+      - uses: socialgouv/kontinuous/.github/actions/deploy-via-github@v1
+        id: deployment
+        continue-on-error: true
+        with:
+          kubeconfig: ${{ inputs.kubeconfig || secrets.KUBECONFIG }}
+          kubeconfigContext: ${{ inputs.kubeconfigContext }}
+          environment: preprod
+          deployWriteOutputFile: "true"
+          sentryDSN: ${{ secrets.KS_SENTRY_DSN }}
+          notifyWebhookUrl: ${{ secrets.KS_NOTIFY_MATTERMOST_WEBHOOK_URL }}
+          projectName: ${{ vars.KS_PROJECT_NAME }}
+          ciNamespace: ${{ vars.KS_CI_NAMESPACE }}
+
+      - uses: socialgouv/workflows/actions/deployment-ending@v1
+        id: deployment-ending
+        with:
+          pat: ${{ steps.token.outputs.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment-starting.outputs.deployment-id }}
+          deployment-name:
+            ${{ steps.deployment-starting.outputs.deployment-name }}
+          deployment-ok:
+            ${{ steps.deployment.outcome == 'success' && 'true' || 'false' }}
+          provider: ${{ steps.deployment.outputs.provider }}
