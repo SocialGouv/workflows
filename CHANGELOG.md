@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/SocialGouv/workflows/compare/v1.14.4...v1.15.0) (2025-05-26)
+
+
+### Features
+
+* **atlas:** prepare workflows ([fc996aa](https://github.com/SocialGouv/workflows/commit/fc996aa4ba1658fd4e7fddb85ec4657e0bd21807))
+
 ## [1.14.4](https://github.com/SocialGouv/workflows/compare/v1.14.3...v1.14.4) (2025-05-22)
 
 
