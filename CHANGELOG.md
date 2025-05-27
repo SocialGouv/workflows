@@ -1,3 +1,11 @@
+# [1.16.0](https://github.com/SocialGouv/workflows/compare/v1.15.0...v1.16.0) (2025-05-27)
+
+
+### Features
+
+* **buildkit:** add all action options to re-usable workflow ([b207a06](https://github.com/SocialGouv/workflows/commit/b207a06fbae8bae1fcc87d69f7237d21518cd33b))
+* **buildkit:** re-usable workflow ([c78c282](https://github.com/SocialGouv/workflows/commit/c78c2820f66398dc10ce3c098cdd28c3f1b1bc5b))
+
 # [1.15.0](https://github.com/SocialGouv/workflows/compare/v1.14.4...v1.15.0) (2025-05-26)
 
 
