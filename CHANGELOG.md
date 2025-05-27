@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/SocialGouv/workflows/compare/v1.16.0...v1.16.1) (2025-05-27)
+
+
+### Bug Fixes
+
+* re-add environment to atlas workflows ([d6301af](https://github.com/SocialGouv/workflows/commit/d6301af3a620fe161f91df9ce5d508832d31e6de))
+
 # [1.16.0](https://github.com/SocialGouv/workflows/compare/v1.15.0...v1.16.0) (2025-05-27)
 
 
