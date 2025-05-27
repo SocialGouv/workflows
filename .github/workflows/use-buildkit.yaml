@@ -1,0 +1,89 @@
+name: 🔨 Build Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment name for GitHub environment context'
+        required: true
+        type: string
+      image-name:
+        description: 'Docker image name (e.g., app, hasura, api)'
+        required: true
+        type: string
+      context:
+        description: 'Build context path'
+        required: false
+        type: string
+        default: '.'
+      dockerfile:
+        description: 'Dockerfile path'
+        required: false
+        type: string
+        default: 'Dockerfile'
+      build-args:
+        description: 'Build arguments as multiline string'
+        required: false
+        type: string
+        default: ''
+      secrets:
+        description: 'Build secrets as multiline string'
+        required: false
+        type: string
+        default: ''
+    outputs:
+      tags:
+        description: 'Docker image tags'
+        value: ${{ jobs.build.outputs.tags }}
+      labels:
+        description: 'Docker image labels'
+        value: ${{ jobs.build.outputs.labels }}
+
+jobs:
+  build:
+    environment: ${{ inputs.environment }}
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+      labels: ${{ steps.meta.outputs.labels }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⏬ Checkout code repository
+        uses: actions/checkout@v4
+
+      - name: 📌 Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.REGISTRY_URL }}/${{ vars.PROJECT_NAME }}/${{ github.event.repository.name }}/${{ inputs.image-name }}
+          tags: |
+            type=semver,pattern=v{{version}},priority=900
+            type=raw,value=preprod-{{sha}},enable=${{ github.ref == 'refs/heads/preprod' }},priority=850
+            type=raw,value=persist-{{sha}},enable=${{ 
+              github.ref_name == 'dev' || 
+              github.ref_name == 'develop' || 
+              github.ref_name == 'preprod' || 
+              github.ref_name == 'main' || 
+              github.ref_name == 'master'
+            }},priority=840
+            type=sha,prefix=sha-,format=long,priority=890
+            type=ref,event=branch,priority=600
+            type=ref,event=pr,priority=600
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }},priority=200
+
+      - name: 📦 Build and push Docker image for ${{ inputs.image-name }}
+        uses: socialgouv/workflows/actions/buildkit@v1
+        with:
+          context: ${{ inputs.context }}
+          dockerfile: ${{ inputs.dockerfile }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          registry: ${{ vars.REGISTRY_URL }}
+          registry-username: ${{ secrets.REGISTRY_USERNAME }}
+          registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+          buildkit-cert-ca: ${{ secrets.BUILDKIT_CERT_CA }}
+          buildkit-cert: ${{ secrets.BUILDKIT_CERT }}
+          buildkit-cert-key: ${{ secrets.BUILDKIT_CERT_KEY }}
+          buildkit-svc-count: ${{ vars.BUILDKIT_SVC_COUNT }}
+          buildkit-daemon-address: ${{ vars.BUILDKIT_DAEMON_ADDRESS }}
+          build-args: ${{ inputs.build-args }}
+          secrets: ${{ inputs.secrets }}
