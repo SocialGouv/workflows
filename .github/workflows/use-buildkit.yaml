@@ -11,6 +11,12 @@ on:
         description: 'Docker image name (e.g., app, hasura, api)'
         required: true
         type: string
+      # Build configuration
+      path:
+        description: 'Root directory'
+        required: false
+        type: string
+        default: '.'
       context:
         description: 'Build context path'
         required: false
@@ -21,6 +27,21 @@ on:
         required: false
         type: string
         default: 'Dockerfile'
+      platforms:
+        description: 'Platform(s) for multi-arch builds (e.g., linux/amd64,linux/arm64)'
+        required: false
+        type: string
+        default: 'linux/amd64'
+      target:
+        description: 'Build stage to build (for multi-stage Dockerfiles)'
+        required: false
+        type: string
+        default: ''
+      push:
+        description: 'Whether to push to registry'
+        required: false
+        type: string
+        default: 'true'
       build-args:
         description: 'Build arguments as multiline string'
         required: false
@@ -31,6 +52,85 @@ on:
         required: false
         type: string
         default: ''
+      # Registry configuration
+      registry:
+        description: 'Docker registry URL'
+        required: false
+        type: string
+        default: ''
+      registry-username:
+        description: 'Registry username'
+        required: false
+        type: string
+        default: ''
+      registry-password:
+        description: 'Registry password'
+        required: false
+        type: string
+        default: ''
+      # Buildkit daemon configuration
+      buildkit-daemon-address:
+        description: 'Address of the buildkit daemon'
+        required: false
+        type: string
+        default: ''
+      buildkit-cert-ca:
+        description: 'Buildkit CA certificate content'
+        required: false
+        type: string
+        default: ''
+      buildkit-cert:
+        description: 'Buildkit certificate content'
+        required: false
+        type: string
+        default: ''
+      buildkit-cert-key:
+        description: 'Buildkit certificate key content'
+        required: false
+        type: string
+        default: ''
+      buildkit-svc-count:
+        description: 'Number of buildkit services for modulo distribution'
+        required: false
+        type: string
+        default: ''
+      buildkit-service-enabled:
+        description: 'Toggle buildkit service usage'
+        required: false
+        type: string
+        default: 'true'
+      buildkit-version:
+        description: 'Buildkit version to use'
+        required: false
+        type: string
+        default: 'v0.22.0'
+      # Cache configuration
+      cache-enabled:
+        description: 'Enable build cache'
+        required: false
+        type: string
+        default: 'true'
+      cache-from-refs:
+        description: 'Additional cache references to import from (comma separated)'
+        required: false
+        type: string
+        default: ''
+      cache-to-refs:
+        description: 'Additional cache references to export to (comma separated)'
+        required: false
+        type: string
+        default: ''
+      git-default-branch:
+        description: 'Default git branch for caching'
+        required: false
+        type: string
+        default: 'main'
+      # Advanced options
+      fallback-enabled:
+        description: 'Enable fallback to local buildkit when service unavailable'
+        required: false
+        type: string
+        default: 'false'
     outputs:
       tags:
         description: 'Docker image tags'
@@ -54,7 +154,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ vars.REGISTRY_URL }}/${{ vars.PROJECT_NAME }}/${{ github.event.repository.name }}/${{ inputs.image-name }}
+          images: ${{ inputs.registry || vars.REGISTRY_URL }}/${{ vars.PROJECT_NAME }}/${{ github.event.repository.name }}/${{ inputs.image-name }}
           tags: |
             type=semver,pattern=v{{version}},priority=900
             type=raw,value=preprod-{{sha}},enable=${{ github.ref == 'refs/heads/preprod' }},priority=850
@@ -73,17 +173,28 @@ jobs:
       - name: 📦 Build and push Docker image for ${{ inputs.image-name }}
         uses: socialgouv/workflows/actions/buildkit@v1
         with:
+          path: ${{ inputs.path }}
           context: ${{ inputs.context }}
           dockerfile: ${{ inputs.dockerfile }}
+          platforms: ${{ inputs.platforms }}
+          target: ${{ inputs.target }}
+          push: ${{ inputs.push }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          registry: ${{ vars.REGISTRY_URL }}
-          registry-username: ${{ secrets.REGISTRY_USERNAME }}
-          registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-          buildkit-cert-ca: ${{ secrets.BUILDKIT_CERT_CA }}
-          buildkit-cert: ${{ secrets.BUILDKIT_CERT }}
-          buildkit-cert-key: ${{ secrets.BUILDKIT_CERT_KEY }}
-          buildkit-svc-count: ${{ vars.BUILDKIT_SVC_COUNT }}
-          buildkit-daemon-address: ${{ vars.BUILDKIT_DAEMON_ADDRESS }}
+          registry: ${{ inputs.registry || vars.REGISTRY_URL }}
+          registry-username: ${{ inputs.registry-username || secrets.REGISTRY_USERNAME }}
+          registry-password: ${{ inputs.registry-password || secrets.REGISTRY_PASSWORD }}
+          buildkit-daemon-address: ${{ inputs.buildkit-daemon-address || vars.BUILDKIT_DAEMON_ADDRESS }}
+          buildkit-cert-ca: ${{ inputs.buildkit-cert-ca || secrets.BUILDKIT_CERT_CA }}
+          buildkit-cert: ${{ inputs.buildkit-cert || secrets.BUILDKIT_CERT }}
+          buildkit-cert-key: ${{ inputs.buildkit-cert-key || secrets.BUILDKIT_CERT_KEY }}
+          buildkit-svc-count: ${{ inputs.buildkit-svc-count || vars.BUILDKIT_SVC_COUNT }}
+          buildkit-service-enabled: ${{ inputs.buildkit-service-enabled }}
+          buildkit-version: ${{ inputs.buildkit-version }}
+          cache-enabled: ${{ inputs.cache-enabled }}
+          cache-from-refs: ${{ inputs.cache-from-refs }}
+          cache-to-refs: ${{ inputs.cache-to-refs }}
+          git-default-branch: ${{ inputs.git-default-branch }}
+          fallback-enabled: ${{ inputs.fallback-enabled }}
           build-args: ${{ inputs.build-args }}
           secrets: ${{ inputs.secrets }}
